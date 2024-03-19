@@ -30,7 +30,7 @@ As discussed in the introduction, the application comprises two frontends and a 
 
 ### Frontend
 
-The user interfaces, accessible to both staffs and students, will be developed using Next.js, a variant of JavaScript. This development will be undertaken by Olawale Olawole.
+The user interfaces, accessible to both staffs and students, will be developed using react.js, a framework of JavaScript. This development will be undertaken by Olawale Olawole.
 
 ### Backend
 
@@ -44,7 +44,7 @@ The database will store comprehensive information about the library, including d
 
 - **Adekunle Adetunji** is a first-class graduate of Metallurgical and Materials Engineering from the Federal University of Technology, Akure, Nigeria.
 
-- **Olawale Olawole** is a medical doctor at the Lagos State Hospital.
+- **Olawale Olawole** is a medical doctor and a fullstack developer, works at the Lagos State Hospital and also a freelancer.
 
 ## Contact Developers
 
