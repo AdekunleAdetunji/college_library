@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "main"
+version = "0.1.0"
+description = ""
+authors = ["Adekunle Adetunji <adekunleadetunjiwilson@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.110.0"
+uvicorn = "^0.28.0"
+psycopg2 = "^2.9.9"
+sqlalchemy = "^2.0.28"
+alembic = "^1.13.1"
+mypy = "^1.9.0"
+pycodestyle = "^2.11.1"
+autopep8 = "^2.0.4"
+python-jose = "^3.3.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+sqlalchemy-utils = "^0.41.1"
+pydantic = {extras = ["email"], version = "^2.6.4"}
+python-multipart = "^0.0.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
