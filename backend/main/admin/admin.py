@@ -20,7 +20,7 @@ from typing import Annotated
 admin = FastAPI()
 
 
-@admin.get("/get_staff", response_model=StaffModel)
+@admin.get("/get-staff", response_model=StaffModel)
 async def get_staff(staff_no: str,
                     token: Annotated[str, Depends(oauth2_scheme)],
                     uni_cursor: Cursor = Depends(Cursor(db="university"))):
