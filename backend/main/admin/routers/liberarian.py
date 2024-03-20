@@ -6,6 +6,7 @@ a liberarian
 import secrets
 import string
 from ...authentication.verify_token import oauth2_scheme
+from ...authentication.verify_token import verify_token
 from ...cursor.cursor import Cursor
 from ...pydantic_models.liberarian import LiberarianModelOut
 from ...pydantic_models.liberarian import LiberarianModelIn
@@ -27,7 +28,21 @@ def generate_random_password():
     return password
 
 
-@admin_liberarian.post("/add_liberarian", response_model=LiberarianModelOut,
+@admin_liberarian.get("/get-liberarian", response_model=LiberarianModelOut,
+                      status_code=status.HTTP_200_OK)
+async def get_liberarian(staff_no: str,
+                         token: Annotated[str, Depends(oauth2_scheme)],
+                         lib_cursor: Cursor = Depends(Cursor())):
+    """route to get info of a registered liberarian"""
+    verify_token(token)
+    liberarian = lib_cursor.get_staff(Liberarian, staff_no)
+    if not liberarian:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="liberarian does not exist")
+    return liberarian
+
+
+@admin_liberarian.post("/add-liberarian", response_model=LiberarianModelOut,
                        status_code=status.HTTP_201_CREATED)
 async def register_liberarian(staff_no: str,
                               token: Annotated[str, Depends(oauth2_scheme)],
@@ -35,6 +50,7 @@ async def register_liberarian(staff_no: str,
                                   db="university")),
                               lib_cursor: Cursor = Depends(Cursor())):
     """register a new liberarian to the liberary"""
+    verify_token(token)
     staff = uni_cursor.get_staff(Staff, staff_no)
     if not staff:
         raise HTTPException(detail="staff not found",
