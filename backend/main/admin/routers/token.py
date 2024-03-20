@@ -20,7 +20,7 @@ async def login_for_token(login_info: Annotated[OAuth2PasswordRequestForm,
     """route to handle JWT generation on admin login"""
     username = login_info.username
     password = login_info.password
-    verify_info(username, password, admin=True)
+    verify_info(username, password, is_admin=True)
     access_token = create_access_token(data={"sub": username},
                                        expires_delta=access_token_expires_admin
                                        )
