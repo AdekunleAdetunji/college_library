@@ -4,9 +4,9 @@ This module contains the main application on which the admin, liberarian and
 student application are mounted
 """
 from .admin import admin
-from fastapi import FastAPI
 from .liberarian import liberarian
 from .user import user
+from fastapi import FastAPI
 
 app = FastAPI()
 
