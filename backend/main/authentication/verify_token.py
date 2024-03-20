@@ -24,5 +24,6 @@ def verify_token(token: OAuth2PasswordBearer):
         username: str = payload.get("sub")
         if not username:
             raise credential_exception
+        return payload
     except JWTError:
         raise credential_exception
