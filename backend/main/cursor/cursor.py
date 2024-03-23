@@ -7,6 +7,7 @@ from typing import Any
 from .base import Base
 from os import getenv
 from sqlalchemy import create_engine
+from sqlalchemy_utils import force_auto_coercion
 from sqlalchemy.orm import Session
 
 
@@ -20,6 +21,7 @@ class Cursor():
 
     def __init__(self, db=""):
         """Initialize a new cursor instance"""
+        force_auto_coercion()
         if db:
             self.__database = db
 
@@ -45,20 +47,20 @@ class Cursor():
         objs = self.__session.query(obj_table).all()
         return objs
 
-    def get(self, obj_table, id):
-        """get an item from a table using its unique user id (uuid)"""
-        obj = self.__session.query(obj_table).filter_by(id=id).first()
+    def get(self, obj_table, uni_id):
+        """get a university personnel using its university id"""
+        obj = self.__session.query(obj_table).filter_by(uni_id=uni_id).first()
         return obj
 
-    def get_staff(self, obj_table, staff_no):
+    def get_staff(self, obj_table, uni_id):
         """get a staff info from the staff table of the university db"""
-        obj = (self.__session.query(obj_table).filter_by(staff_no=staff_no)
+        obj = (self.__session.query(obj_table).filter_by(uni_id=uni_id)
                .first())
         return obj
 
-    def get_student(self, obj_table, matric_no):
+    def get_student(self, obj_table, uni_id):
         """get a student info from the student table of the university db"""
-        obj = (self.__session.query(obj_table).filter_by(matric_no=matric_no)
+        obj = (self.__session.query(obj_table).filter_by(uni_id=uni_id)
                .first())
         return obj
 
