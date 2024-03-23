@@ -16,6 +16,6 @@ class Staff(Base):
     firstname = Column(String(50), nullable=False)
     lastname = Column(String(50), nullable=False)
     middlename = Column(String(50))
-    staff_no = Column(String(20), nullable=False)
+    uni_id = Column(String(20), nullable=False)
     email = Column(EmailType(100), nullable=False)
     phone_no = Column(String(20), nullable=False)
