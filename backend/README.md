@@ -11,7 +11,12 @@ The backend application is powered by FastAPI, a lightning-fast Python web frame
 
 ## Database Setup
 
-The backend uses PostgreSQL 12 as its database. Ensure that the PostgreSQL server is installed and running. You can start the PostgreSQL server with:
+For the backend two databases are used namely;
+
+- PostgreSQL: For storing permanent data such as user info
+- Redis: For storing temporary data such as code sent to email
+  
+The PostgreSQL version used is 12. To get the application started ensure that the PostgreSQL and Redis-server are both installed and running. You can start the PostgreSQL server with:
 
 ```bash
 sudo service postgresql start
@@ -24,6 +29,14 @@ After starting the database server, create the necessary roles, databases, and t
 ```bash
 psql -U adetunji -f backend/setup.sql
 ```
+
+Start the redis server with:
+
+```bash
+sudo service redis-server start
+```
+
+[Follow these instructions to install redis-server](https://realpython.com/python-redis/)
 
 **Note**: Replace the name "adetunji" with your Linux username
 With the database setup complete, proceed to the next section.
@@ -44,10 +57,22 @@ After installing Poetry, create a working environment for the application by run
 poetry install
 ```
 
+## Mailersend
+
+This application utilizes Mailersend as the mail-service provider for managing email sending. To integrate Mailersend with the application, follow these steps:
+
+- Register a Mailersend Account: Visit the [Mailersend website](https://www.mailersend.com/) to register for an account.
+- Obtain API Key: After registering, obtain your API key from the Mailersend dashboard.
+- Create Email Template: Create an email template within your Mailersend account.
+- Configure Environment Variables: Set up environment variables in your backend application with the following details:
+  - MAILERSEND_API_KEY: Your Mailersend API key
+
+**Note**: For this application the module that manages the mailersend api can be found [here](./main/microservices/send_mail.py).
+
 Once the environment is synchronized, start the backend application with the following command:
 
 ```bash
-ADMIN_USERNAME="admin" ADMIN_PASSWORD="admin" ROLE="library" PASSWORD="library" HOST="localhost" PORT="5433" DATABASE="library" poetry run uvicorn --reload main.app:app
+ADMIN_USERNAME="admin" ADMIN_PASSWORD="admin" ROLE="library" PASSWORD="library" HOST="localhost" PORT="5433" DATABASE="library" MAILERSEND_API_KEY="Your_mailer_send_api_key" poetry run uvicorn --reload main.app:app
 ```
 
 The backend server is now up and running. Open your browser and navigate to `http://localhost:8000/docs` to view the SwaggerUI documentation of the backend routes.
