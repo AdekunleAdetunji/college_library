@@ -16,7 +16,7 @@ CREATE TABLE staffs (
     firstname VARCHAR(50),
     lastname VARCHAR(50),
     middlename VARCHAR(50),
-    staff_no VARCHAR(20),
+    uni_id VARCHAR(20),
     email VARCHAR(100),
     phone_no VARCHAR(20)
 );
@@ -27,15 +27,15 @@ CREATE TABLE students (
     firstname VARCHAR(50),
     lastname VARCHAR(50),
     middlename VARCHAR(50),
-    matric_no VARCHAR(20),
+    uni_id VARCHAR(20),
     email VARCHAR(100),
     phone_no VARCHAR(20)
 );
 
 -- Insert mock data into the tables created
 -- Insert names into 'staff' table
-INSERT INTO staffs (firstname, lastname, middlename, staff_no, email, phone_no) VALUES
-    ('John', 'Doe', 'A', 'S001', 'john.doe@example.com', '1234567890'),
+INSERT INTO staffs (firstname, lastname, middlename, uni_id, email, phone_no) VALUES
+    ('Adekunle', 'Adetunji', 'W', 'Mme/16/8060', 'wilsonadekunle9@gmail.com', '08132652712'),
     ('Jane', 'Smith', 'B', 'S002', 'jane.smith@example.com', '2345678901'),
     ('Michael', 'Johnson', 'C', 'S003', 'michael.johnson@example.com', '3456789012'),
     ('Emily', 'Williams', 'D', 'S004', 'emily.williams@example.com', '4567890123'),
@@ -47,10 +47,10 @@ INSERT INTO staffs (firstname, lastname, middlename, staff_no, email, phone_no) 
     ('Ashley', 'Rodriguez', 'J', 'S010', 'ashley.rodriguez@example.com', '0123456789');
 
 -- Insert names into 'students' table
-INSERT INTO students (firstname, lastname, middlename, matric_no, email, phone_no) VALUES
-    ('Ethan', 'Taylor', 'K', 'M001', 'ethan.taylor@example.com', '9876543210'),
-    ('Olivia', 'Brown', 'L', 'M002', 'olivia.brown@example.com', '8765432109'),
-    ('Alexander', 'Anderson', 'M', 'M003', 'alexander.anderson@example.com', '7654321098'),
+INSERT INTO students (firstname, lastname, middlename, uni_id, email, phone_no) VALUES
+    ('Adekunle', 'Adetunji', 'W', 'Mme/16/8060', 'adekunleadetunjiwilson@gmail.com', '08132652712'),
+    ('Olatubosun', 'Ajibola', 'B', 'Mme/16/8086', 'briansharp587@gmail.com', '08061398718'),
+    ('Olawale', 'Olawole', 'M', 'M003', 'olawalemart@gmail.com', '1234567890'),
     ('Sophia', 'Thomas', 'N', 'M004', 'sophia.thomas@example.com', '6543210987'),
     ('William', 'White', 'O', 'M005', 'william.white@example.com', '5432109876'),
     ('Isabella', 'Harris', 'P', 'M006', 'isabella.harris@example.com', '4321098765'),
