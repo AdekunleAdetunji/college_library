@@ -2,15 +2,15 @@
 """
 This module contains the pydantic model for the liberian data validation
 """
-from .basemodel import Base
-from .staff import StaffModel
+from .basemodel import LibBaseModel
+from .basemodel import UniBaseModel
 
 
-class LiberarianModelIn(StaffModel):
-    """Liberarian data validator for insertion into the liberarian table"""
-    password: str
-
-
-class LiberarianModelOut(Base, LiberarianModelIn):
+class LiberarianModelOut(LibBaseModel):
     """Liberarian data validator"""
     pass
+
+
+class LiberarianModelIn(UniBaseModel):
+    """Liberarian data validator for insertion into the liberarian table"""
+    password: str
