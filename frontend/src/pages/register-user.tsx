@@ -34,7 +34,7 @@ const RegisterUser = () => {
           </SelectContent>
         </Select>
       </div>
-      <Register userType={userType as UserType} />
+      <Register userType={userType as UserType} isStaffReq={true} />
     </div>
   );
 };

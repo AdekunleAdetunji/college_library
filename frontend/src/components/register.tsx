@@ -13,13 +13,18 @@ import {
 import { Input } from "./ui/input";
 import { capitalize } from "@/lib/utils";
 import { UserType } from "@/types/users";
+import { register } from "@/lib/actions";
 
 const Register = ({
   userType,
   darkBg,
+  isStaffReq,
+  endPoint,
 }: {
   userType: UserType;
   darkBg?: boolean;
+  isStaffReq?: boolean;
+  endPoint: string;
 }) => {
   const derivedIdType = userType === "student" ? "matric_no" : "staff_id";
   const derivedLabel = capitalize(derivedIdType.replace("_", " "));
@@ -28,16 +33,25 @@ const Register = ({
     [derivedIdType]: z
       .string()
       .min(3, { message: "Please provide a valid " + derivedLabel }),
-    password: z.string().min(6, { message: "che" }),
+    password: z.string().min(6, { message: "Minimum of 6 characters" }),
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       [derivedIdType]: "",
+      password: "",
     },
   });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    const { [derivedIdType]: uni_id, password } = values;
+    const res = isStaffReq
+      ? await register(
+          endPoint,
+          { uni_id, password: password as string },
+          derivedIdType === "staff_id"
+        )
+      : await register(endPoint, { uni_id, password: password as string });
+    return res;
   };
   return (
     <div className="w-full  bg-black/5 p-10 rounded-lg space-y-4">
@@ -55,6 +69,21 @@ const Register = ({
                     </FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="password"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={darkBg ? "text-white" : ""}>
+                      Password
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -8,7 +8,7 @@ import string
 from ...authentication.verify_token import oauth2_scheme
 from ...authentication.verify_token import verify_token
 from ...cursor.cursor import Cursor
-from ...microservices.gen_code import gen_random_pass
+from ...microservices.gen_code import gen_random_code
 from ...pydantic_models.liberarian import LiberarianModelOut
 from ...pydantic_models.liberarian import LiberarianModelIn
 from ...schemas.liberarian import Liberarian
