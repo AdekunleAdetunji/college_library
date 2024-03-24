@@ -15,7 +15,6 @@ from ...schemas.user import User
 from datetime import timedelta
 from fastapi import APIRouter
 from fastapi import Depends
-from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException
 from fastapi import status
 from typing import Annotated
