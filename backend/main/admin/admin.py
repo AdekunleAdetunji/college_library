@@ -9,6 +9,8 @@ from .routers.liberarian import admin_liberarian
 from ..authentication.verify_token import oauth2_scheme
 from ..authentication.verify_token import verify_token
 from ..cursor.cursor import Cursor
+from ..openapi_meta.tag import admin_tags_metadata
+from ..openapi_meta.tag import Tags
 from ..pydantic_models.basemodel import UniBaseModel
 from ..schemas.staff import Staff
 from fastapi import FastAPI
@@ -17,12 +19,14 @@ from fastapi import status
 from fastapi.exceptions import HTTPException
 from typing import Annotated
 
+
 admin = FastAPI(title="College Library (Admin App)",
-                contact=app_metadata.contact
+                contact=app_metadata.contact,
+                openapi_tags=admin_tags_metadata
                 )
 
 
-@admin.get("/get-staff", response_model=UniBaseModel)
+@admin.get("/get-staff", response_model=UniBaseModel, tags=[Tags.get_ind_info])
 async def get_staff(uni_id: str,
                     token: Annotated[str, Depends(oauth2_scheme)],
                     uni_cursor: Cursor = Depends(Cursor(db="university"))):

@@ -6,6 +6,7 @@ a liberarian
 from ...authentication.verify_token import oauth2_scheme
 from ...authentication.verify_token import verify_token
 from ...cursor.cursor import Cursor
+from ...openapi_meta.tag import Tags
 from ...pydantic_models.liberarian import LiberarianModelOut
 from ...pydantic_models.liberarian import LiberarianModelIn
 from ...schemas.liberarian import Liberarian
@@ -21,7 +22,7 @@ admin_liberarian = APIRouter()
 
 
 @admin_liberarian.get("/get-liberarian", response_model=LiberarianModelOut,
-                      status_code=status.HTTP_200_OK,
+                      status_code=status.HTTP_200_OK, tags=[Tags.get_ind_info],
                       response_model_exclude=["password"])
 async def get_liberarian(uni_id: str,
                          token: Annotated[str, Depends(oauth2_scheme)],
@@ -36,7 +37,8 @@ async def get_liberarian(uni_id: str,
 
 
 @admin_liberarian.post("/add-liberarian", response_model=LiberarianModelOut,
-                       status_code=status.HTTP_201_CREATED)
+                       status_code=status.HTTP_201_CREATED,
+                       tags=[Tags.sign_up])
 async def register_liberarian(uni_id: str,
                               password: str,
                               token: Annotated[str, Depends(oauth2_scheme)],
