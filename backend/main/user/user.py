@@ -6,9 +6,10 @@ to the student
 from .routers.account import user_account_router
 from .routers.registration import registration_router
 from .routers.token import user_login_router
+from ..pydantic_models.tag import tags_metadata
 from fastapi import FastAPI
 
-user = FastAPI()
+user = FastAPI(openapi_tags=tags_metadata)
 
 
 user.include_router(user_account_router)
