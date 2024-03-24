@@ -25,8 +25,8 @@ from redis import Redis
 registration_router = APIRouter()
 
 
-@registration_router.post("/get-code", status_code=status.HTTP_201_CREATED,
-                          tags=[Tags.sign_up])
+@registration_router.post("/get-signup-code", tags=[Tags.sign_up],
+                          status_code=status.HTTP_201_CREATED)
 async def get_code(uni_id: str,
                       password: str,
                       red_cursor: Annotated[Redis, Depends(redis_cursor)],
