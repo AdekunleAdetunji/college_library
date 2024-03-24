@@ -8,6 +8,7 @@ from ...cursor.cursor import Cursor
 from ...cursor.redis_cursor import redis_cursor
 from ...microservices.gen_code import gen_random_code
 from ...microservices.send_mail import send_code
+from ...pydantic_models.tag import Tags
 from ...pydantic_models.user import UserModelIn
 from ...schemas.staff import Staff
 from ...schemas.student import Student
@@ -24,8 +25,9 @@ from redis import Redis
 registration_router = APIRouter()
 
 
-@registration_router.post("/sign-up", status_code=status.HTTP_201_CREATED)
-async def user_signup(uni_id: str,
+@registration_router.post("/get-code", status_code=status.HTTP_201_CREATED,
+                          tags=[Tags.sign_up])
+async def get_code(uni_id: str,
                       password: str,
                       red_cursor: Annotated[Redis, Depends(redis_cursor)],
                       is_staff: bool = False,
@@ -64,9 +66,9 @@ async def user_signup(uni_id: str,
     return {}
 
 
-@registration_router.post("/confirm-email",
+@registration_router.post("/sign-up", tags=[Tags.sign_up],
                           status_code=status.HTTP_202_ACCEPTED)
-async def confirm_email(uni_id: str, email_code: str,
+async def sign_up(uni_id: str, email_code: str,
                         redis_cursor: Annotated[Redis, Depends(redis_cursor)],
                         is_staff: bool = False,
                         lib_cursor: Cursor = Depends(Cursor())):
