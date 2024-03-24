@@ -21,6 +21,9 @@ tags_metadata = [
      "description": reset_pass_desc}
 ]
 
+admin_tags_metadata = [tags_metadata[0], tags_metadata[1]]
+liberarian_tags_metadata = [tags_metadata[1], tags_metadata[2]]
+user_tags_metadata = tags_metadata
 
 class Tags(Enum):
     get_ind_info = "Get Individual Information"
