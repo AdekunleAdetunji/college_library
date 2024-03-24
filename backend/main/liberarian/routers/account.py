@@ -10,6 +10,7 @@ from ...cursor.redis_cursor import redis_cursor
 from ...microservices.send_mail import send_code
 from ...microservices.gen_code import gen_random_code
 from ...pydantic_models.liberarian import LiberarianModelOut
+from ...pydantic_models.tag import Tags
 from ...schemas.liberarian import Liberarian
 from datetime import timedelta
 from fastapi import Depends
@@ -24,6 +25,7 @@ account_router = APIRouter()
 
 
 @account_router.get("/", status_code=status.HTTP_200_OK,
+                    tags=[Tags.get_ind_info],
                     response_model=LiberarianModelOut)
 def get_lib_info(uni_id: str, token: Annotated[str, Depends(oauth2_scheme)],
                  lib_cursor: Cursor = Depends(Cursor())):
@@ -40,9 +42,10 @@ def get_lib_info(uni_id: str, token: Annotated[str, Depends(oauth2_scheme)],
     return liberarian
 
 
-@account_router.post("/reset-password-email",
-                     status_code=status.HTTP_201_CREATED)
-async def send_password_reset_code(uni_id: str, new_password: str,
+@account_router.post("/get-reset-code",
+                     status_code=status.HTTP_201_CREATED,
+                     tags=[Tags.reset_pass])
+async def get_reset_code(uni_id: str, new_password: str,
                                    unique_code: str = Depends(gen_random_code),
                                    lib_cursor: Cursor = Depends(Cursor()),
                                    red_cursor: Redis = Depends(redis_cursor)):
@@ -71,7 +74,8 @@ async def send_password_reset_code(uni_id: str, new_password: str,
     return {}
 
 
-@account_router.put("/reset-password", status_code=status.HTTP_202_ACCEPTED)
+@account_router.put("/reset-password", status_code=status.HTTP_202_ACCEPTED,
+                    tags=[Tags.reset_pass])
 async def reset_password(uni_id: str, email_code: str,
                          lib_cursor: Cursor = Depends(Cursor()),
                          red_cursor: Redis = Depends(redis_cursor)):
