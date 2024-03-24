@@ -5,7 +5,7 @@ the liberarian
 """
 from .routers.account import account_router
 from .routers.token import lib_login_router
-from ..pydantic_models.tag import tags_metadata
+from ..openapi_meta.tag import tags_metadata
 from fastapi import FastAPI
 
 

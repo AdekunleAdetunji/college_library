@@ -10,7 +10,7 @@ from ...cursor.redis_cursor import redis_cursor
 from ...microservices.send_mail import send_code
 from ...microservices.gen_code import gen_random_code
 from ...pydantic_models.liberarian import LiberarianModelOut
-from ...pydantic_models.tag import Tags
+from ...openapi_meta.tag import Tags
 from ...schemas.liberarian import Liberarian
 from datetime import timedelta
 from fastapi import Depends

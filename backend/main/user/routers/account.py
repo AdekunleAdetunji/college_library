@@ -9,7 +9,7 @@ from ...cursor.cursor import Cursor
 from ...cursor.redis_cursor import redis_cursor
 from ...microservices.gen_code import gen_random_code
 from ...microservices.send_mail import send_code
-from ...pydantic_models.tag import Tags
+from ...openapi_meta.tag import Tags
 from ...pydantic_models.user import UserModelOut
 from ...schemas.user import User
 from datetime import timedelta
