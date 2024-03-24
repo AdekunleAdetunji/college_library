@@ -8,17 +8,17 @@ sign_up_desc = """Operations with signing up. The sign-up **logic** is here."""
 reset_pass_desc = """Operations to reset password in case of a forgotten
 password. The reset password **logic** is here.
 """
-ind_info_desc = """Operation to manage the retrieval of information about a
+ind_info_desc = """Operations to manage the retrieval of information about a
 liberarian/staff or a liberary user.
 """
 
 tags_metadata = [
     {"name": "Sign up",
      "description": sign_up_desc},
-    {"name": "Reset password",
-     "description": reset_pass_desc},
     {"name": "Get Individual Information",
      "description": ind_info_desc},
+    {"name": "Reset password",
+     "description": reset_pass_desc}
 ]
 
 
