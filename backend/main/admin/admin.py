@@ -3,6 +3,7 @@
 This module contains the admin application that handles all routing relating to
 the admin
 """
+from main.openapi_meta import app_metadata
 from .routers.token import admin_login
 from .routers.liberarian import admin_liberarian
 from ..authentication.verify_token import oauth2_scheme
@@ -16,7 +17,9 @@ from fastapi import status
 from fastapi.exceptions import HTTPException
 from typing import Annotated
 
-admin = FastAPI()
+admin = FastAPI(title="College Library (Admin App)",
+                contact=app_metadata.contact
+                )
 
 
 @admin.get("/get-staff", response_model=UniBaseModel)
