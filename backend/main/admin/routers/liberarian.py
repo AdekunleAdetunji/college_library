@@ -9,6 +9,7 @@ from ...cursor.cursor import Cursor
 from ...openapi_meta.tag import Tags
 from ...pydantic_models.liberarian import LiberarianModelOut
 from ...pydantic_models.liberarian import LiberarianModelIn
+from ...pydantic_models.liberarian import LibRegModel
 from ...schemas.liberarian import Liberarian
 from ...schemas.staff import Staff
 from fastapi import APIRouter
@@ -39,27 +40,28 @@ async def get_liberarian(uni_id: str,
 @admin_liberarian.post("/add-liberarian", response_model=LiberarianModelOut,
                        status_code=status.HTTP_201_CREATED,
                        tags=[Tags.sign_up])
-async def register_liberarian(uni_id: str,
-                              password: str,
+async def register_liberarian(body: LibRegModel,
                               token: Annotated[str, Depends(oauth2_scheme)],
                               uni_cursor: Cursor = Depends(Cursor(
                                   db="university")),
                               lib_cursor: Cursor = Depends(Cursor())):
     """register a new liberarian to the liberary"""
     verify_token(token)
-    staff = uni_cursor.get(Staff, uni_id)
+    staff = uni_cursor.get(Staff, body.uni_id)
     if not staff:
         raise HTTPException(detail="staff not found",
                             status_code=status.HTTP_404_NOT_FOUND)
 
     staff_dict = {"firstname": staff.firstname, "lastname": staff.lastname,
                   "middlename": staff.middlename, "email": staff.email,
-                  "phone_no": staff.phone_no, "password": password,
+                  "phone_no": staff.phone_no, "password": body.new_password,
                   "uni_id": staff.uni_id}
     liberarian = LiberarianModelIn(**staff_dict)
     try:
         liberarian = lib_cursor.new(Liberarian, **liberarian.model_dump())
+        lib_cursor.save()
+        return liberarian
     except IntegrityError:
         raise HTTPException(detail="liberarian already registered",
                             status_code=status.HTTP_409_CONFLICT)
-    return liberarian
+    
