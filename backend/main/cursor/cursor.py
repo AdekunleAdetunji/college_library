@@ -3,7 +3,6 @@
 This module contains the database cursor for establishing connection with the
 database
 """
-from typing import Any
 from .base import Base
 from os import getenv
 from sqlalchemy import create_engine
@@ -27,6 +26,7 @@ class Cursor():
 
     def reload(self):
         """update the current pointer to reflect changes in the database"""
+        #self.__session = Session(bind=self.__engine, expire_on_commit=False)
         Base.metadata.create_all(bind=self.__engine)
         self.__session = Session(bind=self.__engine, expire_on_commit=False)
 
@@ -39,7 +39,8 @@ class Cursor():
         """add an item to a table"""
         new_obj = obj_table(**kwargs)
         self.__session.add(new_obj)
-        self.save()
+        #self.save()
+        #return self.get_by_uuid(obj_table, id=new_obj.id)
         return new_obj
 
     def all(self, obj_table):
@@ -51,17 +52,15 @@ class Cursor():
         """get a university personnel using its university id"""
         obj = self.__session.query(obj_table).filter_by(uni_id=uni_id).first()
         return obj
-
-    def get_staff(self, obj_table, uni_id):
-        """get a staff info from the staff table of the university db"""
-        obj = (self.__session.query(obj_table).filter_by(uni_id=uni_id)
-               .first())
+    
+    def get_by_name(self, obj_table, names: dict = {}):
+        """get a database table row by name"""
+        obj = self.__session.query(obj_table).filter_by(**names).first()
         return obj
 
-    def get_student(self, obj_table, uni_id):
-        """get a student info from the student table of the university db"""
-        obj = (self.__session.query(obj_table).filter_by(uni_id=uni_id)
-               .first())
+    def get_by_uuid(self, obj_table, id):
+        """get a university personnel using its university id"""
+        obj = self.__session.query(obj_table).filter_by(id=id).first()
         return obj
 
     def update(self, obj_table, id, *args, **kwargs):
