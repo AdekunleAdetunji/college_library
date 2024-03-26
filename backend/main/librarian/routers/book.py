@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-This module contains router to handle liberarian operation pertaining to a book
+This module contains router to handle librarian operation pertaining to a book
 """
 from ...authentication.verify_token import oauth2_scheme
 from ...authentication.verify_token import verify_token
@@ -32,7 +32,7 @@ async def add_new_book(
     lib_cursor: Cursor = Depends(Cursor()),
     uni_cursor: Cursor = Depends(Cursor("university"))
 ):
-    """route for liberarian to add a new book to the library book collection"""
+    """route for librarian to add a new book to the library book collection"""
     token_id = verify_token(token)
     if lib_id != token_id["sub"]:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,

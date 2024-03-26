@@ -1,16 +1,16 @@
 #!/usr/bin/python3
 """
 This module contains the routers to manage activities that admin can perform on
-a liberarian
+a librarian
 """
 from ...authentication.verify_token import oauth2_scheme
 from ...authentication.verify_token import verify_token
 from ...cursor.cursor import Cursor
 from ...openapi_meta.tag import Tags
-from ...pydantic_models.liberarian import LiberarianModelOut
-from ...pydantic_models.liberarian import LiberarianModelIn
-from ...pydantic_models.liberarian import LibRegModel
-from ...schemas.liberarian import Liberarian
+from ...pydantic_models.librarian import LibrarianModelOut
+from ...pydantic_models.librarian import LibrarianModelIn
+from ...pydantic_models.librarian import LibRegModel
+from ...schemas.librarian import Librarian
 from ...schemas.staff import Staff
 from fastapi import APIRouter
 from fastapi import Depends
@@ -19,33 +19,33 @@ from fastapi import status
 from sqlalchemy.exc import IntegrityError
 from typing import Annotated
 
-admin_liberarian = APIRouter()
+admin_librarian = APIRouter()
 
 
-@admin_liberarian.get("/get-liberarian", response_model=LiberarianModelOut,
+@admin_librarian.get("/get-librarian", response_model=LibrarianModelOut,
                       status_code=status.HTTP_200_OK, tags=[Tags.get_ind_info],
                       response_model_exclude=["password"])
-async def get_liberarian(uni_id: str,
+async def get_librarian(uni_id: str,
                          token: Annotated[str, Depends(oauth2_scheme)],
                          lib_cursor: Cursor = Depends(Cursor())):
-    """route to get info of a registered liberarian"""
+    """route to get info of a registered librarian"""
     verify_token(token)
-    liberarian = lib_cursor.get(Liberarian, uni_id)
-    if not liberarian:
+    librarian = lib_cursor.get(Librarian, uni_id)
+    if not librarian:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="liberarian does not exist")
-    return liberarian
+                            detail="librarian does not exist")
+    return librarian
 
 
-@admin_liberarian.post("/add-liberarian", response_model=LiberarianModelOut,
+@admin_librarian.post("/add-librarian", response_model=LibrarianModelOut,
                        status_code=status.HTTP_201_CREATED,
                        tags=[Tags.sign_up])
-async def register_liberarian(body: LibRegModel,
+async def register_librarian(body: LibRegModel,
                               token: Annotated[str, Depends(oauth2_scheme)],
                               uni_cursor: Cursor = Depends(Cursor(
                                   db="university")),
                               lib_cursor: Cursor = Depends(Cursor())):
-    """register a new liberarian to the liberary"""
+    """register a new librarian to the liberary"""
     verify_token(token)
     staff = uni_cursor.get(Staff, body.uni_id)
     if not staff:
@@ -56,12 +56,12 @@ async def register_liberarian(body: LibRegModel,
                   "middlename": staff.middlename, "email": staff.email,
                   "phone_no": staff.phone_no, "password": body.new_password,
                   "uni_id": staff.uni_id}
-    liberarian = LiberarianModelIn(**staff_dict)
+    librarian = LibrarianModelIn(**staff_dict)
     try:
-        liberarian = lib_cursor.new(Liberarian, **liberarian.model_dump())
+        librarian = lib_cursor.new(Librarian, **librarian.model_dump())
         lib_cursor.save()
-        return liberarian
+        return librarian
     except IntegrityError:
-        raise HTTPException(detail="liberarian already registered",
+        raise HTTPException(detail="librarian already registered",
                             status_code=status.HTTP_409_CONFLICT)
     

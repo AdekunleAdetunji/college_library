@@ -79,7 +79,7 @@ async def reset_password(uni_id: str, email_code: str,
     user = lib_cursor.get(User, uni_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="liberarian not found")
+                            detail="user not found")
 
     user_json = red_cursor.get(uni_id)
     if not user_json:

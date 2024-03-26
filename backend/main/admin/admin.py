@@ -5,7 +5,7 @@ the admin
 """
 from main.openapi_meta import app_metadata
 from .routers.token import admin_login
-from .routers.liberarian import admin_liberarian
+from .routers.librarian import admin_librarian
 from ..authentication.verify_token import oauth2_scheme
 from ..authentication.verify_token import verify_token
 from ..cursor.cursor import Cursor
@@ -39,4 +39,4 @@ async def get_staff(uni_id: str,
     return staff
 
 admin.include_router(admin_login)
-admin.include_router(admin_liberarian)
+admin.include_router(admin_librarian)

@@ -9,7 +9,7 @@ reset_pass_desc = """Operations to reset password in case of a forgotten
 password. The reset password **logic** is here.
 """
 ind_info_desc = """Operations to manage the retrieval of information about a
-liberarian/staff or a liberary user.
+librarian/staff or a liberary user.
 """
 
 book_operations = """Routers to manage all activities relating to a book."""
@@ -26,7 +26,7 @@ tags_metadata = [
 ]
 
 admin_tags_metadata = [tags_metadata[0], tags_metadata[1]]
-liberarian_tags_metadata = [tags_metadata[1], tags_metadata[3],
+librarian_tags_metadata = [tags_metadata[1], tags_metadata[3],
                             tags_metadata[2]]
 user_tags_metadata = tags_metadata
 

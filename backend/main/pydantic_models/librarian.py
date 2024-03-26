@@ -8,15 +8,15 @@ from .basemodel import UniBaseModel
 
 
 class LibRegModel(BaseIn):
-    """Liberarian registration model"""
+    """Librarian registration model"""
     uni_id: str
     new_password: str
 
-class LiberarianModelOut(LibBaseModel):
-    """Liberarian data validator"""
+class LibrarianModelOut(LibBaseModel):
+    """Librarian data validator"""
     pass
 
 
-class LiberarianModelIn(UniBaseModel):
-    """Liberarian data validator for insertion into the liberarian table"""
+class LibrarianModelIn(UniBaseModel):
+    """Librarian data validator for insertion into the librarian table"""
     password: str

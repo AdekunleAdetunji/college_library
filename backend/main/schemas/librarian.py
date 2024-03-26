@@ -10,7 +10,7 @@ from sqlalchemy_utils import EmailType
 from sqlalchemy_utils import PasswordType
 
 
-class Liberarian(Basemodel, Base):
+class Librarian(Basemodel, Base):
     """ORM for the librarian table"""
     __tablename__ = "librarians"
     firstname = Column(String(50), nullable=False)

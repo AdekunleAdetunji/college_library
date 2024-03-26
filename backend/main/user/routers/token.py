@@ -21,7 +21,7 @@ user_login_router = APIRouter()
 async def login_for_token(login_info: Annotated[OAuth2PasswordRequestForm,
                                                 Depends()],
                           lib_cursor: Cursor = Depends(Cursor())):
-    """route to handle liberarian login"""
+    """route to handle user login"""
     username = login_info.username
     password = login_info.password
     verify_info(username, password, cursor=lib_cursor)
