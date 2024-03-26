@@ -26,7 +26,6 @@ class Cursor():
 
     def reload(self):
         """update the current pointer to reflect changes in the database"""
-        #self.__session = Session(bind=self.__engine, expire_on_commit=False)
         Base.metadata.create_all(bind=self.__engine)
         self.__session = Session(bind=self.__engine, expire_on_commit=False)
 
@@ -39,8 +38,6 @@ class Cursor():
         """add an item to a table"""
         new_obj = obj_table(**kwargs)
         self.__session.add(new_obj)
-        #self.save()
-        #return self.get_by_uuid(obj_table, id=new_obj.id)
         return new_obj
 
     def all(self, obj_table):
