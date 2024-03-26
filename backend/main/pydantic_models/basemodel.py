@@ -8,7 +8,19 @@ from pydantic import EmailStr
 from uuid import UUID
 
 
-class UniBaseModel(BaseModel):
+class BaseIn(BaseModel):
+    """Base model for all university tables"""
+    class Config:
+        from_attributes = True
+
+class BaseOut():
+    """Base model for all library database table"""
+    id: UUID
+    created_at: datetime
+    updated_at: datetime
+
+
+class UniBaseModel(BaseIn):
     """Staff data validator class"""
     firstname: str
     lastname: str
@@ -17,12 +29,7 @@ class UniBaseModel(BaseModel):
     uni_id: str
     phone_no: str
 
-    class Config:
-        from_attributes = True
 
-
-class LibBaseModel(UniBaseModel):
+class LibBaseModel(BaseOut, UniBaseModel):
     """Pydantic model containing common attributes shared by other models"""
-    id: UUID
-    created_at: datetime
-    updated_at: datetime
+    pass
