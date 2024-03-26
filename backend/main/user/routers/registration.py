@@ -6,14 +6,13 @@ token
 import json
 from ...cursor.cursor import Cursor
 from ...cursor.redis_cursor import redis_cursor
-from ...microservices.gen_code import gen_random_code
-from ...microservices.send_mail import send_code
+from ...microservices.celery.tasks import send_code
 from ...openapi_meta.tag import Tags
 from ...pydantic_models.user import UserModelIn
+from ...pydantic_models.user import UserRegModel
 from ...schemas.staff import Staff
 from ...schemas.student import Student
 from ...schemas.user import User
-from datetime import timedelta
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import HTTPException
@@ -27,20 +26,18 @@ registration_router = APIRouter()
 
 @registration_router.post("/get-signup-code", tags=[Tags.sign_up],
                           status_code=status.HTTP_201_CREATED)
-async def get_code(uni_id: str,
-                      password: str,
-                      red_cursor: Annotated[Redis, Depends(redis_cursor)],
-                      is_staff: bool = False,
-                      lib_cursor: Cursor = Depends(Cursor()),
-                      uni_cursor: Cursor = Depends(Cursor("university")),
-                      unique_code: str = Depends(gen_random_code)):
+async def get_code(body: UserRegModel,
+                   red_cursor: Annotated[Redis, Depends(redis_cursor)],
+                   lib_cursor: Cursor = Depends(Cursor()),
+                   uni_cursor: Cursor = Depends(Cursor("university"))):
     """route to handle new user signup by sending verification code to email"""
+    uni_id = body.uni_id
     user = lib_cursor.get(User, uni_id)
     if user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
                             detail="user already exists")
 
-    if is_staff:
+    if body.is_staff:
         user = uni_cursor.get(Staff, uni_id)
     else:
         user = uni_cursor.get(Student, uni_id)
@@ -54,15 +51,11 @@ async def get_code(uni_id: str,
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
                             detail="duplicate session")
 
-    user_email = user.email
-    user_dict = user.__dict__.copy()
+    user_dict = user.__dict__
     user_dict.pop("_sa_instance_state")
-    await send_code(user_email, unique_code)
-    user_dict.update({"code": unique_code, "password": password})
-    user_json = json.dumps(user_dict)
-    code_expire_time = timedelta(minutes=10)
-    red_cursor.setex(uni_id, code_expire_time, user_json)
-
+    user_dict.update(body.model_dump())
+    user_dict.update({"password": user_dict.pop("new_password")})
+    send_code.delay(user_dict)
     return {}
 
 
@@ -96,6 +89,7 @@ async def sign_up(uni_id: str, email_code: str,
         user_py_obj.is_staff = False
 
     lib_cursor.new(User, **user_py_obj.model_dump())
+    lib_cursor.save()
 
     redis_cursor.flushdb("uni_id")
 
