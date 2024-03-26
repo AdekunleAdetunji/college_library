@@ -32,6 +32,13 @@ CREATE TABLE students (
     phone_no VARCHAR(20)
 );
 
+-- Create 'faculties' table
+CREATE TABLE schools (
+    id SERIAL PRIMARY KEY,
+    uni_id VARCHAR(8),
+    name VARCHAR(100)
+);
+
 -- Insert mock data into the tables created
 -- Insert names into 'staff' table
 INSERT INTO staffs (firstname, lastname, middlename, uni_id, email, phone_no) VALUES
@@ -59,6 +66,13 @@ INSERT INTO students (firstname, lastname, middlename, uni_id, email, phone_no) 
     ('Benjamin', 'King', 'S', 'M009', 'benjamin.king@example.com', '1098765432'),
     ('Mia', 'Jackson', 'T', 'M010', 'mia.jackson@example.com', '0987654321');
 
+INSERT INTO schools (uni_id, name) VALUES
+('SEET', 'school of engineering and engineering technology'),
+('SAAT', 'school of agricultural and agricultural technology'),
+('SPSS', 'school of physical sciences'),
+('SEMS', 'school of earth and mineral science');
+
 -- Grant SELECT privileges on 'staff' and 'students' tables to 'library' user
 GRANT SELECT ON staffs TO library;
 GRANT SELECT ON students TO library;
+GRANT SELECT On schools To library;
