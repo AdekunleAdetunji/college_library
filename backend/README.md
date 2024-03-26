@@ -69,7 +69,23 @@ This application utilizes Mailersend as the mail-service provider for managing e
 
 **Note**: For this application the module that manages the mailersend api can be found [here](./main/microservices/send_mail.py).
 
-Once the environment is synchronized, start the backend application with the following command:
+## Celery Setup
+
+Celery is used for managing background tasks in the application. Follow these steps to set up Celery:
+
+- Install Celery: Ensure Celery is installed in your Poetry environment after cloning this repo by running
+  
+  ```bash
+  poetry install
+  ```
+
+- Starting the Celery Worker: Open a new terminal window, navigate to the backend directory and run the command below to start the celery worker
+
+  ```bash  
+  MAILERSEND_API_KEY="your_mailer_send_api_key" poetry run celery -A main.microservices.celery.app.app worker --loglevel=INFO
+  ```
+
+Once the environment is synchronized, in a new terminal window, navigate to the backend directory and start the backend application with the following command:
 
 ```bash
 ADMIN_USERNAME="admin" ADMIN_PASSWORD="admin" ROLE="library" PASSWORD="library" HOST="localhost" PORT="5433" DATABASE="library" MAILERSEND_API_KEY="Your_mailer_send_api_key" poetry run uvicorn --reload main.app:app
