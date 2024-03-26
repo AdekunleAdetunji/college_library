@@ -7,12 +7,11 @@ from ...authentication.verify_token import oauth2_scheme
 from ...authentication.verify_token import verify_token
 from ...cursor.cursor import Cursor
 from ...cursor.redis_cursor import redis_cursor
-from ...microservices.send_mail import send_code
-from ...microservices.gen_code import gen_random_code
+from ...microservices.celery.tasks import send_code
 from ...pydantic_models.liberarian import LiberarianModelOut
+from ...pydantic_models.liberarian import LibRegModel
 from ...openapi_meta.tag import Tags
 from ...schemas.liberarian import Liberarian
-from datetime import timedelta
 from fastapi import Depends
 from fastapi import APIRouter
 from fastapi import HTTPException
@@ -45,32 +44,28 @@ def get_lib_info(uni_id: str, token: Annotated[str, Depends(oauth2_scheme)],
 @account_router.post("/get-reset-code",
                      status_code=status.HTTP_201_CREATED,
                      tags=[Tags.reset_pass])
-async def get_reset_code(uni_id: str, new_password: str,
-                                   unique_code: str = Depends(gen_random_code),
-                                   lib_cursor: Cursor = Depends(Cursor()),
-                                   red_cursor: Redis = Depends(redis_cursor)):
+async def get_reset_code(body: LibRegModel,
+                         lib_cursor: Cursor = Depends(Cursor()),
+                         red_cursor: Redis = Depends(redis_cursor)):
     """route to send password reset code to liberarian email"""
-    liberarian = lib_cursor.get(Liberarian, uni_id)
+    liberarian = lib_cursor.get(Liberarian, body.uni_id)
     if not liberarian:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="liberarian not found")
 
     liberarian_dict = liberarian.to_dict()
-    id = str(liberarian_dict["id"])
 
-    lib_in_redis = red_cursor.get(id)
+    lib_in_redis = red_cursor.get(body.uni_id)
     if lib_in_redis:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
                             detail="duplicate session")
 
+    
+    id = str(liberarian_dict["id"])
     liberarian_dict.pop("password")
-    liberarian_dict["id"] = id
-    await send_code(liberarian_dict["email"], unique_code)
-    liberarian_dict.update({"code": unique_code, "password": new_password})
-    code_expire = timedelta(minutes=9)
-    liberarian_json = json.dumps(liberarian_dict)
-    red_cursor.setex(liberarian_dict["id"], code_expire, liberarian_json)
-
+    liberarian_dict.update({"password": body.new_password, "id": id})
+    print(liberarian_dict)
+    send_code.delay(liberarian_dict)
     return {}
 
 
@@ -85,8 +80,7 @@ async def reset_password(uni_id: str, email_code: str,
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="liberarian not found")
 
-    key = str(liberarian.id)
-    liberarian_json = red_cursor.get(key)
+    liberarian_json = red_cursor.get(uni_id)
     if not liberarian_json:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="user not found")
@@ -99,6 +93,6 @@ async def reset_password(uni_id: str, email_code: str,
     liberarian.password = liberarian_dict["password"]
     lib_cursor.save()
 
-    red_cursor.flushdb(key)
+    red_cursor.flushdb(uni_id)
 
     return {}
