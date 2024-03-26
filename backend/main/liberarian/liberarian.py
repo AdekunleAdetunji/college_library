@@ -5,6 +5,7 @@ the liberarian
 """
 from main.openapi_meta import app_metadata
 from .routers.account import account_router
+from .routers.book import book_router
 from .routers.token import lib_login_router
 from ..openapi_meta.tag import liberarian_tags_metadata
 from fastapi import FastAPI
@@ -18,3 +19,4 @@ liberarian = FastAPI(title="College Library (Librarian App)",
 
 liberarian.include_router(lib_login_router)
 liberarian.include_router(account_router)
+liberarian.include_router(book_router)
