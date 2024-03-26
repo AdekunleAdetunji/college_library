@@ -1,3 +1,11 @@
+-- Drop the databases 'university' and 'library' if they exist
+DROP DATABASE IF EXISTS library;
+DROP DATABASE IF EXISTS university;
+
+
+-- Drop library role if it exists
+DROP ROLE IF EXISTS library;
+
 -- Create user 'library' with password 'library'
 CREATE USER library WITH PASSWORD 'library';
 
