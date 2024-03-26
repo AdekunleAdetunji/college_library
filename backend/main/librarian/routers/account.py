@@ -8,10 +8,10 @@ from ...authentication.verify_token import verify_token
 from ...cursor.cursor import Cursor
 from ...cursor.redis_cursor import redis_cursor
 from ...microservices.celery.tasks import send_code
-from ...pydantic_models.liberarian import LibrarianModelOut
-from ...pydantic_models.liberarian import LibRegModel
+from ...pydantic_models.librarian import LibrarianModelOut
+from ...pydantic_models.librarian import LibRegModel
 from ...openapi_meta.tag import Tags
-from ...schemas.liberarian import Librarian
+from ...schemas.librarian import Librarian
 from fastapi import Depends
 from fastapi import APIRouter
 from fastapi import HTTPException
