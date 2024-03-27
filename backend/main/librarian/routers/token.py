@@ -7,6 +7,7 @@ from ...cursor.cursor import Cursor
 from ...authentication.auth_var import access_token_expires_lib
 from ...authentication.create_token import create_access_token
 from ...authentication.verify_info import verify_info
+from ...openapi_meta.tag import Tags
 from ...pydantic_models.token import Token
 from fastapi import APIRouter
 from fastapi import Depends
@@ -17,7 +18,7 @@ from typing import Annotated
 lib_login_router = APIRouter()
 
 
-@lib_login_router.post("/token", include_in_schema=False, response_model=Token)
+@lib_login_router.post("/token", tags=[Tags.sign_in], response_model=Token)
 async def login_for_token(login_info: Annotated[OAuth2PasswordRequestForm,
                                                 Depends()],
                           lib_cursor: Cursor = Depends(Cursor())):
