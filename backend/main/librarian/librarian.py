@@ -11,10 +11,9 @@ from ..openapi_meta.tag import librarian_tags_metadata
 from fastapi import FastAPI
 
 
-#del tags_metadata[0]
 librarian = FastAPI(title="College Library (Librarian App)",
-                     contact=app_metadata.contact,
-                     openapi_tags=librarian_tags_metadata)
+                    contact=app_metadata.contact,
+                    openapi_tags=librarian_tags_metadata)
 
 
 librarian.include_router(lib_login_router)
