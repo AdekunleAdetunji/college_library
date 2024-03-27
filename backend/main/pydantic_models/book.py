@@ -13,13 +13,15 @@ from datetime import date
 class BookModelIn(BaseIn):
     """model to validate book input data into the book table"""
     title: str
-    summary: str
-    faculties: list[FacultyModelIn]
-    uni_id: str # remember to add that this is the isbn number
+    description: str
+    faculties: list
+    uni_id: str  # remember to add that this is the isbn number
     publisher: str | None = None
     publish_year: date | None = None
     authors: list[AuthorModelIn]
+    quantity: int
+
 
 class BookModelOut(BaseOut, BookModelIn):
     """model to validate book output data from the book table"""
-    pass
+    faculties: list[FacultyModelIn]
