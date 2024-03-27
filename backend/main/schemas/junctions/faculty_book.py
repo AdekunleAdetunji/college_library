@@ -13,14 +13,14 @@ faculty_book = Table(
         "faculty_book",
         Base.metadata,
         Column(
-               "faculty_id",
-              ForeignKey("faculties.id", ondelete="CASCADE"),
-              primary_key=True      
+            "faculty_id",
+            ForeignKey("faculties.id", ondelete="CASCADE"),
+            primary_key=True
         ),
         Column(
             "book_id",
             ForeignKey("books.id", ondelete="CASCADE"),
             primary_key=True
         )
-                     
+
 )

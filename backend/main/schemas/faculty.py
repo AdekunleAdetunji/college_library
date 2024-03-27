@@ -6,7 +6,6 @@ from .basemodel import Basemodel
 from .junctions.faculty_book import faculty_book
 from ..cursor.base import Base
 from sqlalchemy import Column
-from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy.orm import relationship
 

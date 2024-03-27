@@ -10,6 +10,7 @@ from sqlalchemy import String
 from sqlalchemy_utils import EmailType
 from sqlalchemy.orm import relationship
 
+
 class Author(Basemodel, Base):
     """Author ORM"""
     __tablename__ = "authors"
@@ -18,4 +19,4 @@ class Author(Basemodel, Base):
     middlename = Column(String(50), nullable=True)
     email = Column(EmailType(100), nullable=True)
     books = relationship("Book", secondary=author_book,
-                        back_populates="authors")
+                         back_populates="authors")

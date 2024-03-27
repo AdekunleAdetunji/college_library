@@ -8,6 +8,7 @@ from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
 
+
 class School(Base):
     """university faculty table ORM"""
     __tablename__ = "schools"
