@@ -51,7 +51,7 @@ CREATE TABLE schools (
 -- Insert names into 'staff' table
 INSERT INTO staffs (firstname, lastname, middlename, uni_id, email, phone_no) VALUES
     ('Adekunle', 'Adetunji', 'W', 'Mme/16/8060', 'wilsonadekunle9@gmail.com', '08132652712'),
-    ('Jane', 'Smith', 'B', 'S002', 'jane.smith@example.com', '2345678901'),
+    ('Olatubosun', 'Ajibola', 'B', 'Mme/16/8086', 'adekunleadetunjiwilson@gmail.com', '08061398718'),
     ('Michael', 'Johnson', 'C', 'S003', 'michael.johnson@example.com', '3456789012'),
     ('Emily', 'Williams', 'D', 'S004', 'emily.williams@example.com', '4567890123'),
     ('David', 'Brown', 'E', 'S005', 'david.brown@example.com', '5678901234'),
@@ -64,7 +64,6 @@ INSERT INTO staffs (firstname, lastname, middlename, uni_id, email, phone_no) VA
 -- Insert names into 'students' table
 INSERT INTO students (firstname, lastname, middlename, uni_id, email, phone_no) VALUES
     ('Adekunle', 'Adetunji', 'W', 'Mme/16/8060', 'adekunleadetunjiwilson@gmail.com', '08132652712'),
-    ('Olatubosun', 'Ajibola', 'B', 'Mme/16/8086', 'briansharp587@gmail.com', '08061398718'),
     ('Olawale', 'Olawole', 'M', 'M003', 'olawalemart@gmail.com', '1234567890'),
     ('Sophia', 'Thomas', 'N', 'M004', 'sophia.thomas@example.com', '6543210987'),
     ('William', 'White', 'O', 'M005', 'william.white@example.com', '5432109876'),
