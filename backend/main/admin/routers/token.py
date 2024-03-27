@@ -5,6 +5,7 @@ This module contains the api router to manage admin login
 from ...authentication.auth_var import access_token_expires_admin
 from ...authentication.create_token import create_access_token
 from ...authentication.verify_info import verify_info
+from ...openapi_meta.tag import Tags
 from ...pydantic_models.token import Token
 from fastapi import APIRouter
 from fastapi import Depends
@@ -14,7 +15,7 @@ from typing import Annotated
 admin_login = APIRouter()
 
 
-@admin_login.post("/token", response_model=Token, include_in_schema=False)
+@admin_login.post("/token", response_model=Token, tags=[Tags.sign_in])
 async def login_for_token(login_info: Annotated[OAuth2PasswordRequestForm,
                                                 Depends()]):
     """route to handle JWT generation on admin login"""
