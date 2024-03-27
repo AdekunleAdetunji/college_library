@@ -14,6 +14,7 @@ class UserRegModel(BaseIn):
     is_staff: bool = False
     new_password: str
 
+
 class UserModelIn(UniBaseModel):
     """User model to validate data going into the user table"""
     is_staff: bool = False

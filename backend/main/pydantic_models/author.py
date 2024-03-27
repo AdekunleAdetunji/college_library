@@ -15,6 +15,7 @@ class AuthorModelIn(BaseIn):
     middlename: str
     email: EmailStr | None = None
 
+
 class AuthorModelOut(BaseOut, AuthorModelIn):
     """model to validate author output data"""
     pass

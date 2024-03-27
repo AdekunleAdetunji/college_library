@@ -13,7 +13,6 @@ class FacultyModelIn(BaseIn):
     name: str | None = None
 
 
-
 class FacultyModelOut(FacultyModelIn, BaseOut):
     """model to validate model going out of the table"""
     pass

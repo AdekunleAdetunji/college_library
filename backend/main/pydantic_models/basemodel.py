@@ -13,6 +13,7 @@ class BaseIn(BaseModel):
     class Config:
         from_attributes = True
 
+
 class BaseOut():
     """Base model for all library database table"""
     id: UUID

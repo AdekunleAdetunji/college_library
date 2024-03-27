@@ -12,6 +12,7 @@ class LibRegModel(BaseIn):
     uni_id: str
     new_password: str
 
+
 class LibrarianModelOut(LibBaseModel):
     """Librarian data validator"""
     pass
