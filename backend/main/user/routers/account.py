@@ -65,7 +65,7 @@ async def get_reset_code(body: UserRegModel,
     user_dict["id"] = id
     user_dict.update({"password": body.new_password})
     send_code.delay(user_dict)
-    
+
     return {}
 
 

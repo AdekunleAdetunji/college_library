@@ -62,9 +62,9 @@ async def get_code(body: UserRegModel,
 @registration_router.post("/sign-up", tags=[Tags.sign_up],
                           status_code=status.HTTP_202_ACCEPTED)
 async def sign_up(uni_id: str, email_code: str,
-                        redis_cursor: Annotated[Redis, Depends(redis_cursor)],
-                        is_staff: bool = False,
-                        lib_cursor: Cursor = Depends(Cursor())):
+                  redis_cursor: Annotated[Redis, Depends(redis_cursor)],
+                  is_staff: bool = False,
+                  lib_cursor: Cursor = Depends(Cursor())):
     """route to handle confirmation of email sent to email"""
     reg_user = lib_cursor.get(User, uni_id)
     if reg_user:
