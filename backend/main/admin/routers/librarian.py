@@ -23,11 +23,11 @@ admin_librarian = APIRouter()
 
 
 @admin_librarian.get("/get-librarian", response_model=LibrarianModelOut,
-                      status_code=status.HTTP_200_OK, tags=[Tags.get_ind_info],
-                      response_model_exclude=["password"])
+                     status_code=status.HTTP_200_OK, tags=[Tags.get_ind_info],
+                     response_model_exclude=["password"])
 async def get_librarian(uni_id: str,
-                         token: Annotated[str, Depends(oauth2_scheme)],
-                         lib_cursor: Cursor = Depends(Cursor())):
+                        token: Annotated[str, Depends(oauth2_scheme)],
+                        lib_cursor: Cursor = Depends(Cursor())):
     """route to get info of a registered librarian"""
     verify_token(token)
     librarian = lib_cursor.get(Librarian, uni_id)
@@ -38,13 +38,14 @@ async def get_librarian(uni_id: str,
 
 
 @admin_librarian.post("/add-librarian", response_model=LibrarianModelOut,
-                       status_code=status.HTTP_201_CREATED,
-                       tags=[Tags.sign_up])
+                      status_code=status.HTTP_201_CREATED,
+                      tags=[Tags.sign_up])
 async def register_librarian(body: LibRegModel,
-                              token: Annotated[str, Depends(oauth2_scheme)],
-                              uni_cursor: Cursor = Depends(Cursor(
-                                  db="university")),
-                              lib_cursor: Cursor = Depends(Cursor())):
+                             token: Annotated[str, Depends(oauth2_scheme)],
+                             uni_cursor: Cursor = Depends(Cursor(
+                                 db="university")
+                             ),
+                             lib_cursor: Cursor = Depends(Cursor())):
     """register a new librarian to the liberary"""
     verify_token(token)
     staff = uni_cursor.get(Staff, body.uni_id)
@@ -64,4 +65,3 @@ async def register_librarian(body: LibRegModel,
     except IntegrityError:
         raise HTTPException(detail="librarian already registered",
                             status_code=status.HTTP_409_CONFLICT)
-    
