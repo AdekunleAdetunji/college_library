@@ -60,7 +60,6 @@ async def get_reset_code(body: LibRegModel,
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
                             detail="duplicate session")
 
-    
     id = str(librarian_dict["id"])
     librarian_dict.pop("password")
     librarian_dict.update({"password": body.new_password, "id": id})
