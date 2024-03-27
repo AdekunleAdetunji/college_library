@@ -23,6 +23,12 @@ class Cursor():
         force_auto_coercion()
         if db:
             self.__database = db
+        url_str = (f"postgresql+psycopg2://{self.__db_role}:"
+                   f"{self.__password}@{self.__host}:{self.__port}/"
+                   f"{self.__database}")
+        self.__url = url_str
+        self.__engine = create_engine(url=self.__url, echo=False)
+        self.reload()
 
     def reload(self):
         """update the current pointer to reflect changes in the database"""
@@ -49,7 +55,7 @@ class Cursor():
         """get a university personnel using its university id"""
         obj = self.__session.query(obj_table).filter_by(uni_id=uni_id).first()
         return obj
-    
+
     def get_by_name(self, obj_table, names: dict = {}):
         """get a database table row by name"""
         obj = self.__session.query(obj_table).filter_by(**names).first()
@@ -85,12 +91,6 @@ class Cursor():
         logic to be executed when the cursor object is passed as a dependency
         """
         try:
-            url_str = (f"postgresql+psycopg2://{self.__db_role}:"
-                       f"{self.__password}@{self.__host}:{self.__port}/"
-                       f"{self.__database}")
-            self.__url = url_str
-            self.__engine = create_engine(url=self.__url, echo=False)
-            self.reload()
             yield self
         finally:
             self.close()
