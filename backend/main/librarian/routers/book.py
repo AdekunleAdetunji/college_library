@@ -38,20 +38,40 @@ async def add_new_book(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="access denied")
     try:
+        book_in_db = lib_cursor.get(Book, body.uni_id)
+        if book_in_db:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail="book already exists")
+
         book_dict = body.model_dump()
         authors = book_dict.pop("authors")
         faculties = book_dict.pop("faculties")
+        if not authors:
+            raise HTTPException(
+                  status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                  detail="authors can't be empty"
+                  )
+
+        if not faculties:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="faculty can't be empty")
+
+        if not book_dict["quantity"] or book_dict["quantity"] < 1:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="invalid book quantity")
+
         book = lib_cursor.new(Book, **book_dict)
-        
-        for faculty in faculties:
-            uni_faculty_id = faculty["uni_id"]
+
+        for uni_faculty_id in faculties:
             school = uni_cursor.get(School, uni_faculty_id)
             faculty = lib_cursor.get(Faculty, uni_faculty_id)
             if not school and not faculty:
-                    raise HTTPException(
-                          status_code=status.HTTP_404_NOT_FOUND,
-                          detail="faculty not found, contact admin"
-                        )
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="faculty not found, contact admin"
+                    )
             if school and not faculty:
                 school = FacultyModelIn.model_validate(school)
                 faculty = lib_cursor.new(Faculty, **school.model_dump())
@@ -62,9 +82,9 @@ async def add_new_book(
             if not author_in_db:
                 author_in_db = lib_cursor.new(Author, **author)
             book.authors.append(author_in_db)
-        
+
         lib_cursor.save()
         return book
-    except IntegrityError:
-         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                             detail="book already exists")
+    except IntegrityError as ie:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail="internal sever error")
