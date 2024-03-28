@@ -11,6 +11,8 @@ from ..compose_mail import code_mailer
 from ..gen_code import gen_random_code
 from ...cursor.cursor import Cursor
 from ...schemas.book import Book
+from ...schemas.faculty import Faculty
+from ...schemas.school import School
 from datetime import datetime
 from datetime import timedelta
 from redis import Redis
@@ -153,3 +155,17 @@ def whitelist():
 
         red_blacklists = json.dumps(red_blacklists)
         red_cursor.set("blacklists", red_blacklists)
+
+
+@app.task
+def sync_faculty():
+    """task to update library faculties with schools in university"""
+    lib_cursor = Cursor()
+    uni_cursor = Cursor("university")
+    for school in uni_cursor.all(School):
+        if not lib_cursor.get(Faculty, school.uni_id):
+            school_dict = school.__dict__
+            school_dict.pop("_sa_instance_state")
+            lib_cursor.new(Faculty, **school_dict)
+    lib_cursor.save()
+    return True
