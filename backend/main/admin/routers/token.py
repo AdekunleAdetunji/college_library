@@ -5,6 +5,7 @@ This module contains the api router to manage admin login
 from ...authentication.auth_var import access_token_expires_admin
 from ...authentication.create_token import create_access_token
 from ...authentication.verify_info import verify_info
+from ...microservices.celery.tasks import sync_faculty
 from ...openapi_meta.tag import Tags
 from ...pydantic_models.token import Token
 from fastapi import APIRouter
@@ -22,6 +23,8 @@ async def login_for_token(login_info: Annotated[OAuth2PasswordRequestForm,
     username = login_info.username
     password = login_info.password
     verify_info(username, password, is_admin=True)
+    # synchronize faculties on info confirmation
+    sync_faculty.delay()
     access_token = create_access_token(data={"sub": username},
                                        expires_delta=access_token_expires_admin
                                        )
