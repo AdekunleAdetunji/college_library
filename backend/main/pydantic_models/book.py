@@ -6,7 +6,8 @@ of the library books database
 from .basemodel import BaseIn
 from .basemodel import BaseOut
 from .author import AuthorModelIn
-from .faculty import FacultyModelIn
+from .author import AuthorModelOut
+from .faculty import FacultyModelOut
 from datetime import date
 
 
@@ -24,4 +25,5 @@ class BookModelIn(BaseIn):
 
 class BookModelOut(BaseOut, BookModelIn):
     """model to validate book output data from the book table"""
-    faculties: list[FacultyModelIn]
+    authors: list[AuthorModelOut]
+    faculties: list[FacultyModelOut]
