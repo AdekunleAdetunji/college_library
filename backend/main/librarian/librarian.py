@@ -6,6 +6,7 @@ the librarian
 from main.openapi_meta import app_metadata
 from .routers.account import account_router
 from .routers.book import book_router
+from .routers.faculty import faculty_router
 from .routers.token import lib_login_router
 from ..openapi_meta.tag import librarian_tags_metadata
 from fastapi import FastAPI
@@ -19,3 +20,4 @@ librarian = FastAPI(title="College Library (Librarian App)",
 librarian.include_router(lib_login_router)
 librarian.include_router(account_router)
 librarian.include_router(book_router)
+librarian.include_router(faculty_router)

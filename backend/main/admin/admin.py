@@ -6,6 +6,7 @@ the admin
 from main.openapi_meta import app_metadata
 from .routers.token import admin_login
 from .routers.librarian import admin_librarian
+from .routers.faculty import admin_faculty
 from ..authentication.verify_token import oauth2_scheme
 from ..authentication.verify_token import verify_token
 from ..cursor.cursor import Cursor
@@ -40,3 +41,4 @@ async def get_staff(uni_id: str,
 
 admin.include_router(admin_login)
 admin.include_router(admin_librarian)
+admin.include_router(admin_faculty)
