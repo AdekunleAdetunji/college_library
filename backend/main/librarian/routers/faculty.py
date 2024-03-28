@@ -24,6 +24,6 @@ async def get_faculties(uni_id: str,
     if uni_id != token_dict["sub"]:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="access denied")
-    
+
     all_faculties = lib_cursor.all(Faculty)
     return all_faculties

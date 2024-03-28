@@ -17,7 +17,8 @@ ind_info_desc = """Operations to manage the retrieval of information about a
 librarian/staff or a liberary user.
 """
 
-book_operations = """Routers to manage all activities relating to a **book**."""
+book_operations = """Routers to manage all activities relating to a **book**.
+"""
 
 faculty_operations = """Routers to manage all activities relating to library
 **faculty**."""

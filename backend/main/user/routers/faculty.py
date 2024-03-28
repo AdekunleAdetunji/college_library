@@ -16,7 +16,7 @@ faculty_router = APIRouter()
 
 
 @faculty_router.get("/faculties", status_code=status.HTTP_200_OK,
-                 response_model=list[FacultyModelIn], tags=[Tags.faculty])
+                    response_model=list[FacultyModelIn], tags=[Tags.faculty])
 async def get_faculties(uni_id: str,
                         token: Annotated[str, Depends(oauth2_scheme)],
                         lib_cursor: Cursor = Depends(Cursor())):
@@ -24,6 +24,6 @@ async def get_faculties(uni_id: str,
     if uni_id != token_dict["sub"]:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="access denied")
-    
+
     all_faculties = lib_cursor.all(Faculty)
     return all_faculties

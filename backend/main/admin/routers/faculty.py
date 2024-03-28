@@ -17,7 +17,7 @@ admin_faculty = APIRouter()
 
 
 @admin_faculty.get("/faculties", status_code=status.HTTP_200_OK,
-                    response_model=list[FacultyModelIn], tags=[Tags.faculty])
+                   response_model=list[FacultyModelIn], tags=[Tags.faculty])
 async def get_faculties(token: Annotated[str, Depends(oauth2_scheme)],
                         lib_cursor: Cursor = Depends(Cursor())):
     verify_token(token)
