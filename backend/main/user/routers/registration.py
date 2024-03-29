@@ -63,7 +63,6 @@ async def get_code(body: UserRegModel,
                           status_code=status.HTTP_202_ACCEPTED)
 async def sign_up(uni_id: str, email_code: str,
                   redis_cursor: Annotated[Redis, Depends(redis_cursor)],
-                  is_staff: bool = False,
                   lib_cursor: Cursor = Depends(Cursor())):
     """route to handle confirmation of email sent to email"""
     reg_user = lib_cursor.get(User, uni_id)
@@ -83,10 +82,6 @@ async def sign_up(uni_id: str, email_code: str,
                             detail="invalid code")
 
     user_py_obj = UserModelIn(**user_dict)
-    if is_staff:
-        user_py_obj.is_staff = True
-    else:
-        user_py_obj.is_staff = False
 
     lib_cursor.new(User, **user_py_obj.model_dump())
     lib_cursor.save()
