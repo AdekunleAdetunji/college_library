@@ -6,7 +6,7 @@ from mailersend import emails
 from os import getenv
 
 API_KEY = getenv("MAILERSEND_API_KEY")
-EMAIL = "MS_XdcwG0@trial-o65qngkv9p8lwr12.mlsender.net"
+EMAIL = "info@trial-k68zxl2e2d5lj905.mlsender.net"
 mailer = emails.NewEmail(API_KEY)
 
 mail_body = {}
@@ -33,7 +33,7 @@ def code_mailer(user_email: str, code: str):
         }
     ]
 
-    template_id = "zr6ke4nzn8e4on12"
+    template_id = "jy7zpl9jo9og5vx6"
     mailer.set_mail_from(mail_from, mail_body)
     mailer.set_mail_to(recipient, mail_body)
     mailer.set_subject("Email Verification", mail_body)
