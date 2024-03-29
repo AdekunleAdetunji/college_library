@@ -11,8 +11,11 @@ from ..compose_mail import code_mailer
 from ..gen_code import gen_random_code
 from ...cursor.cursor import Cursor
 from ...schemas.book import Book
+from ...schemas.borrow import Borrow
 from ...schemas.faculty import Faculty
+from ...schemas.librarian import Librarian
 from ...schemas.school import School
+from ...schemas.user import User
 from datetime import datetime
 from datetime import timedelta
 from redis import Redis
@@ -27,6 +30,7 @@ def send_code(self, user_dict: dict):
     try:
         res = mailer.send(mail_body)
         if not res.startswith("202"):
+            print(res)
             raise Exception("Invalid email template")
         user_dict.update({"code": code})
         user_json = json.dumps(user_dict)
@@ -65,10 +69,13 @@ def reserve_book(user_uni_id: str, book_id: str):
         red_cursor.set("reserves", reserves_json)
 
     lib_cursor = Cursor()
-    book = lib_cursor.get_by_uuid(Book, book_id)
+    book = lib_cursor.get(Book, book_id)
     book.quantity = book.quantity - 1
+    
     lib_cursor.save()
     lib_cursor.close()
+
+    return True
 
 
 @app.task
@@ -126,6 +133,8 @@ def check_reserves():
         book_in_db.quantity += 1
         lib_cursor.save()
         lib_cursor.close()
+    
+    return True
 
 
 @app.task
@@ -156,6 +165,8 @@ def whitelist():
         red_blacklists = json.dumps(red_blacklists)
         red_cursor.set("blacklists", red_blacklists)
 
+        return True
+
 
 @app.task
 def sync_faculty():
@@ -167,5 +178,44 @@ def sync_faculty():
             school_dict = school.__dict__
             school_dict.pop("_sa_instance_state")
             lib_cursor.new(Faculty, **school_dict)
+    
     lib_cursor.save()
+    lib_cursor.close()
+    
+    return True
+
+
+@app.task
+def approve_borrow(lib_id: str, user_id: str, book_id: str):
+    """task to update the borrows table for a new book borrow"""
+    with Redis() as red_cursor:
+        reserves = red_cursor.get("reserves")
+        reserves = json.loads(reserves)
+        user_reserves = reserves.get(user_id)
+        user_reserves.pop(book_id)
+        if user_reserves:
+            reserves[user_id] = user_reserves
+        else:
+            reserves.pop(user_id)
+        reserves = json.dumps(reserves)
+        red_cursor.set("reserves", reserves)
+    
+    lib_cursor: Cursor = Cursor()
+    
+    book = lib_cursor.get(Book, book_id)
+    librarian = lib_cursor.get(Librarian, lib_id)
+    user = lib_cursor.get(User, user_id)
+    
+    kwargs = {"user_uuid": user.id, "book_uuid": book.id,
+              "librarian_uuid": librarian.id,
+              "expire_time": datetime.now() + timedelta(weeks=3)}
+    borrow_obj = lib_cursor.new(Borrow, **kwargs)
+    
+    book.borrows.append(borrow_obj)
+    librarian.borrows.append(borrow_obj)
+    user.borrows.append(borrow_obj)
+    
+    lib_cursor.save()
+    lib_cursor.close()
+
     return True
