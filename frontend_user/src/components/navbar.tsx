@@ -6,7 +6,7 @@ import { ReactNode, useContext } from "react";
 import { UserContext } from "@/contexts/login";
 
 const Navbar = () => {
-  const { user, deleteToken } = useContext(UserContext);
+  const { deleteToken, isLoggedIn } = useContext(UserContext);
 
   return (
     <nav className="bg-gray-800">
@@ -23,33 +23,37 @@ const Navbar = () => {
                 Home
               </Link>
             </li>
-            <li className="ml-4">
-              <Link href="/books/borrowed" className="text-white">
-                Books
-              </Link>
-            </li>
-            <li className="ml-4">
-              <Link href="/books/reserved" className="text-white">
-                My Reservations
-              </Link>
-            </li>
+            {isLoggedIn && (
+              <li className="ml-4">
+                <Link href="/books/borrowed" className="text-white">
+                  Books
+                </Link>
+              </li>
+            )}
+            {isLoggedIn && (
+              <li className="ml-4">
+                <Link href="/books/reserved" className="text-white">
+                  My Reservations
+                </Link>
+              </li>
+            )}
           </ul>
           <ul className="flex gap=4">
-            {user.isLoggedIn && (
+            {isLoggedIn && (
               <li className="ml-4">
                 <button onClick={() => deleteToken()} className="text-white">
                   Sign out
                 </button>
               </li>
             )}
-            {!user.isLoggedIn && (
+            {!isLoggedIn && (
               <li className="ml-4">
                 <Link href="/sign-up" className="text-white">
                   Sign up
                 </Link>
               </li>
             )}
-            {!user.isLoggedIn && (
+            {!isLoggedIn && (
               <li className="ml-4">
                 <Link href="/login" className="text-white">
                   Sign in
