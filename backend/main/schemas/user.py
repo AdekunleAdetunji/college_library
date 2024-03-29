@@ -8,6 +8,7 @@ from sqlalchemy import Column
 from sqlalchemy import Boolean
 from sqlalchemy import String
 from sqlalchemy_utils import PasswordType
+from sqlalchemy.orm import relationship
 
 
 class User(Basemodel, Base):
@@ -21,3 +22,4 @@ class User(Basemodel, Base):
     password = Column(PasswordType(schemes="md5_crypt"), nullable=True)
     phone_no = Column(String(20), nullable=False)
     is_staff = Column(Boolean, nullable=False)
+    borrows = relationship("Borrow", backref="user", cascade="all, delete")
