@@ -15,7 +15,7 @@ For the backend two databases are used namely;
 
 - PostgreSQL: For storing permanent data such as user info
 - Redis: For storing temporary data such as code sent to email
-  
+
 The PostgreSQL version used is 12. To get the application started ensure that the PostgreSQL and Redis-server are both installed and running. You can start the PostgreSQL server with:
 
 ```bash
@@ -74,21 +74,21 @@ This application utilizes Mailersend as the mail-service provider for managing e
 Celery is used for managing background tasks in the application. Follow these steps to set up Celery:
 
 - Install Celery: Ensure Celery is installed in your Poetry environment after cloning this repo by running
-  
+
   ```bash
   poetry install
   ```
 
 - Starting the Celery Worker: Open a new terminal window, navigate to the backend directory and run the command below to start the celery worker
 
-  ```bash  
-  ROLE="library" PASSWORD="library" HOST="localhost" PORT="5433" DATABASE="library" MAILERSEND_API_KEY="your_mailer_send_api_key" poetry run celery -A main.microservices.celery.app.app worker --beat --loglevel=INFO
+  ```bash
+  ROLE="library" PASSWORD="library" HOST="localhost" PORT="5433" DATABASE="library" MAILERSEND_API_KEY="mlsn.b3ca32be7418ab021e64e104b8819883034ddefd9d8198970adb7d9f246b662c" poetry run celery -A main.microservices.celery.app.app worker --beat --loglevel=INFO
   ```
 
 Once the environment is synchronized, in a new terminal window, navigate to the backend directory and start the backend application with the following command:
 
 ```bash
-ADMIN_USERNAME="admin" ADMIN_PASSWORD="admin" ROLE="library" PASSWORD="library" HOST="localhost" PORT="5433" DATABASE="library" MAILERSEND_API_KEY="Your_mailer_send_api_key" poetry run uvicorn --reload main.app:app
+ADMIN_USERNAME="admin" ADMIN_PASSWORD="admin" ROLE="library" PASSWORD="library" HOST="localhost" PORT="5433" DATABASE="library" MAILERSEND_API_KEY="mlsn.b3ca32be7418ab021e64e104b8819883034ddefd9d8198970adb7d9f246b662c" poetry run uvicorn --reload main.app:app
 ```
 
 The backend server is now up and running. Open your browser and navigate to `http://localhost:8000/docs` to view the SwaggerUI documentation of the backend routes.
