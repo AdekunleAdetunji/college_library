@@ -96,11 +96,11 @@ async def add_new_book(
     except IntegrityError as ie:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail="internal sever error")
-    
+
 
 @book_router.get("/reserves", status_code=status.HTTP_200_OK, tags=[Tags.book],
                  response_model=dict[str, list[ReserveBookModel]])
-async def all_reserves(lib_id: str, 
+async def all_reserves(lib_id: str,
                        token: Annotated[str, Depends(oauth2_scheme)],
                        lib_cursor: Cursor = Depends(Cursor()),
                        red_cursor: Redis = Depends(redis_cursor)):
@@ -115,7 +115,7 @@ async def all_reserves(lib_id: str,
     if not reserves:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="no user in reserve")
-    
+
     reserves_out = {}
     for user_id, user_reserves in reserves.items():
         user_book_list = []
@@ -125,7 +125,7 @@ async def all_reserves(lib_id: str,
             book_dict["expire_date"] = datetime.fromisoformat(expire_delta)
             user_book_list.append(book_dict)
         reserves_out[user_id] = user_book_list
-    
+
     return reserves_out
 
 
@@ -140,7 +140,7 @@ async def user_reserves(lib_id: str, user_id: str,
     if lib_id != token_dict["sub"]:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="access denied")
-    
+
     user = lib_cursor.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -156,7 +156,7 @@ async def user_reserves(lib_id: str, user_id: str,
     if not user_reserves:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="user reserve is empty")
-    
+
     user_book_list = []
     for book_uuid, expire_delta in user_reserves.items():
         book = lib_cursor.get(Book, book_uuid)
@@ -170,27 +170,27 @@ async def user_reserves(lib_id: str, user_id: str,
 @book_router.post("/approve-borrow", status_code=status.HTTP_201_CREATED,
                   tags=[Tags.book])
 async def approve(lib_id: str, user_id: str, book_id: str,
-                         token: Annotated[str, Depends(oauth2_scheme)],
-                         lib_cursor: Cursor = Depends(Cursor()),
-                         red_cursor: Redis = Depends(redis_cursor)):
+                  token: Annotated[str, Depends(oauth2_scheme)],
+                  lib_cursor: Cursor = Depends(Cursor()),
+                  red_cursor: Redis = Depends(redis_cursor)):
     """route to approve a library users book reservations"""
     token_dict = verify_token(token)
     if lib_id != token_dict["sub"]:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="access denied")
-    
+
     # check if book in reserve
     reserves = red_cursor.get("reserves")
     reserves = json.loads(reserves)
     if not reserves:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="no user in reserve")
-    
+
     user_reserve = reserves.get(user_id)
     if not user_reserve:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="user reserve is empty")
-    
+
     book_in_reserve = user_reserve.get(book_id)
     if not book_in_reserve:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -202,13 +202,13 @@ async def approve(lib_id: str, user_id: str, book_id: str,
             (not user.is_staff and len(user.borrows) == 3)):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
                             detail="maximum borrow limit reached")
-    
+
     # check if book in active user borrows
     book = lib_cursor.get(Book, book_id)
     for borrow in user.borrows:
         if borrow.book_uuid == book.id and borrow.active:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                            detail="user already have a copy of book")
+                                detail="user already have a copy of book")
     # call celery function to approve borrow
     approve_borrow.delay(lib_id, user_id, book_id)
 

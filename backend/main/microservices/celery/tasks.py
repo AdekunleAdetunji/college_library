@@ -71,7 +71,7 @@ def reserve_book(user_uni_id: str, book_id: str):
     lib_cursor = Cursor()
     book = lib_cursor.get(Book, book_id)
     book.quantity = book.quantity - 1
-    
+
     lib_cursor.save()
     lib_cursor.close()
 
@@ -133,7 +133,7 @@ def check_reserves():
         book_in_db.quantity += 1
         lib_cursor.save()
         lib_cursor.close()
-    
+
     return True
 
 
@@ -178,10 +178,10 @@ def sync_faculty():
             school_dict = school.__dict__
             school_dict.pop("_sa_instance_state")
             lib_cursor.new(Faculty, **school_dict)
-    
+
     lib_cursor.save()
     lib_cursor.close()
-    
+
     return True
 
 
@@ -199,22 +199,22 @@ def approve_borrow(lib_id: str, user_id: str, book_id: str):
             reserves.pop(user_id)
         reserves = json.dumps(reserves)
         red_cursor.set("reserves", reserves)
-    
+
     lib_cursor: Cursor = Cursor()
-    
+
     book = lib_cursor.get(Book, book_id)
     librarian = lib_cursor.get(Librarian, lib_id)
     user = lib_cursor.get(User, user_id)
-    
+
     kwargs = {"user_uuid": user.id, "book_uuid": book.id,
               "librarian_uuid": librarian.id,
               "expire_time": datetime.now() + timedelta(weeks=3)}
     borrow_obj = lib_cursor.new(Borrow, **kwargs)
-    
+
     book.borrows.append(borrow_obj)
     librarian.borrows.append(borrow_obj)
     user.borrows.append(borrow_obj)
-    
+
     lib_cursor.save()
     lib_cursor.close()
 

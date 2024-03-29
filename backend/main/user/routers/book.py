@@ -142,7 +142,7 @@ async def user_reserves(user_id: str,
     if user_id != token_dict["sub"]:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="access denied")
-    
+
     user = lib_cursor.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -158,7 +158,7 @@ async def user_reserves(user_id: str,
     if not user_reserves:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="user reserve is empty")
-    
+
     user_book_list = []
     for book_uuid, expire_delta in user_reserves.items():
         book = lib_cursor.get(Book, book_uuid)

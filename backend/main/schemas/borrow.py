@@ -17,7 +17,7 @@ class Borrow(Basemodel, Base):
     __tablename__ = "borrows"
     book_uuid = Column(UUID, ForeignKey("books.id"), nullable=False)
     librarian_uuid = Column(UUID, ForeignKey("librarians.id"),
-                          nullable=False)
+                            nullable=False)
     user_uuid = Column(UUID, ForeignKey("users.id"),  nullable=False)
     expire_time = Column(DateTime, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
