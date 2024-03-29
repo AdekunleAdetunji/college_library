@@ -12,10 +12,12 @@ from ...microservices.celery.tasks import reserve_book
 from ...openapi_meta.tag import Tags
 from ...pydantic_models.book import BookModelOut
 from ...pydantic_models.faculty import FacultyModelIn
+from ...pydantic_models.redis import ReserveBookModel
 from ...schemas.book import Book
 from ...schemas.faculty import Faculty
 from ...schemas.school import School
 from ...schemas.user import User
+from datetime import datetime
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import HTTPException
@@ -98,7 +100,7 @@ async def make_reservation(user_uni_id: str, book_uni_id: str,
             raise HTTPException(status_code=status.HTTP_409_CONFLICT,
                                 detail="max reservation limit reached")
         if user_reserves:
-            book_info = user_reserves.get(str(book.id))
+            book_info = user_reserves.get(book.uni_id)
         else:
             book_info = {}
 
@@ -115,7 +117,7 @@ async def make_reservation(user_uni_id: str, book_uni_id: str,
 
     user_blacklists = blacklists.get(user_uni_id)
     if user_blacklists:
-        book_info = user_blacklists.get(str(book.id))
+        book_info = user_blacklists.get(book.uni_id)
     else:
         book_info = {}
 
@@ -124,6 +126,44 @@ async def make_reservation(user_uni_id: str, book_uni_id: str,
                             detail="user blacklisted from reserving book")
 
     # call celery reserve_book task to make reservation
-    reserve_book.delay(user_uni_id, str(book.id))
+    reserve_book.delay(user_uni_id, book.uni_id)
 
     return True
+
+
+@book_router.get("/user-reserves", status_code=status.HTTP_200_OK,
+                 tags=[Tags.book], response_model=list[ReserveBookModel])
+async def user_reserves(user_id: str,
+                        token: Annotated[str, Depends(oauth2_scheme)],
+                        lib_cursor: Cursor = Depends(Cursor()),
+                        red_cursor: Redis = Depends(redis_cursor)):
+    """route to get a users book reserves"""
+    token_dict = verify_token(token)
+    if user_id != token_dict["sub"]:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="access denied")
+    
+    user = lib_cursor.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="user not found")
+
+    reserves = red_cursor.get("reserves")
+    reserves = json.loads(reserves)
+    if not reserves:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="no data in reserve")
+
+    user_reserves = reserves.get(user_id)
+    if not user_reserves:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="user reserve is empty")
+    
+    user_book_list = []
+    for book_uuid, expire_delta in user_reserves.items():
+        book = lib_cursor.get(Book, book_uuid)
+        book_dict = book.to_dict()
+        book_dict["expire_date"] = datetime.fromisoformat(expire_delta)
+        user_book_list.append(book_dict)
+
+    return user_book_list
