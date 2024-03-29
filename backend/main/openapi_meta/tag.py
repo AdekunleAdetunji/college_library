@@ -38,8 +38,7 @@ tags_metadata = [
      "description": reset_pass_desc},
 ]
 
-admin_tags_metadata = [tags_metadata[0], tags_metadata[1],
-                       tags_metadata[4], tags_metadata[3]]
+admin_tags_metadata = [tags_metadata[1], tags_metadata[4], tags_metadata[3]]
 librarian_tags_metadata = [tags_metadata[1],
                            tags_metadata[2],
                            tags_metadata[3],
