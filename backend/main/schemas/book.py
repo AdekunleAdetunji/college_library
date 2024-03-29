@@ -28,3 +28,4 @@ class Book(Basemodel, Base):
                            back_populates="books")
     faculties = relationship("Faculty", secondary=faculty_book,
                              back_populates="books")
+    borrows = relationship("Borrow", backref="book", cascade="all, delete")
