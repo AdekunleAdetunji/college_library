@@ -70,16 +70,16 @@ async def get_reset_code(body: LibRegModel,
 
 @account_router.put("/reset-password", status_code=status.HTTP_202_ACCEPTED,
                     tags=[Tags.reset_pass])
-async def reset_password(uni_id: str, email_code: str,
+async def reset_password(lib_id: str, email_code: str,
                          lib_cursor: Cursor = Depends(Cursor()),
                          red_cursor: Redis = Depends(redis_cursor)):
     """route to reset libraian password"""
-    librarian = lib_cursor.get(Librarian, uni_id)
+    librarian = lib_cursor.get(Librarian, lib_id)
     if not librarian:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="librarian not found")
 
-    librarian_json = red_cursor.get(uni_id)
+    librarian_json = red_cursor.get(lib_id)
     if not librarian_json:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="user not found")
@@ -92,6 +92,6 @@ async def reset_password(uni_id: str, email_code: str,
     librarian.password = librarian_dict["password"]
     lib_cursor.save()
 
-    red_cursor.flushdb(uni_id)
+    red_cursor.flushdb(lib_id)
 
     return {}
