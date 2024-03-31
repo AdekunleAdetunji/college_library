@@ -88,7 +88,7 @@ Celery is used for managing background tasks in the application. Follow these st
 Once the environment is synchronized, in a new terminal window, navigate to the backend directory and start the backend application with the following command:
 
 ```bash
-ADMIN_USERNAME="admin" ADMIN_PASSWORD="admin" ROLE="library" PASSWORD="library" HOST="localhost" PORT="5433" DATABASE="library" MAILERSEND_API_KEY="api_key" poetry run uvicorn --reload main.app:app
+ADMIN_USERNAME="admin" ADMIN_PASSWORD="admin" ROLE="library" PASSWORD="library" HOST="localhost" PORT="5433" DATABASE="library" poetry run uvicorn --reload main.app:app
 ```
 
 The backend server is now up and running. Open your browser and navigate to `http://localhost:8000/docs` to view the SwaggerUI documentation of the backend routes.
