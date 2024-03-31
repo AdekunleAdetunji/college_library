@@ -21,3 +21,4 @@ class Borrow(Basemodel, Base):
     user_uuid = Column(UUID, ForeignKey("users.id"),  nullable=False)
     expire_time = Column(DateTime, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
+    overdue = Column(Boolean, nullable=False, default=False)
