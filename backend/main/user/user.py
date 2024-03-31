@@ -5,7 +5,9 @@ to the student
 """
 from main.openapi_meta import app_metadata
 from .routers.account import user_account_router
-from .routers.book import book_router
+from .routers.book.book import book_router
+from .routers.book.borrow import borrow_router
+from .routers.book.reserves import reserves_router
 from .routers.faculty import faculty_router
 from .routers.registration import registration_router
 from .routers.token import user_login_router
@@ -19,6 +21,8 @@ user = FastAPI(title="College Library (User App)",
 
 user.include_router(user_account_router)
 user.include_router(book_router)
+user.include_router(reserves_router)
+user.include_router(borrow_router)
 user.include_router(registration_router)
 user.include_router(user_login_router)
 user.include_router(faculty_router)
