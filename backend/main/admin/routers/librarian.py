@@ -25,12 +25,12 @@ admin_librarian = APIRouter()
 @admin_librarian.get("/get-librarian", response_model=LibrarianModelOut,
                      status_code=status.HTTP_200_OK, tags=[Tags.get_ind_info],
                      response_model_exclude=["password"])
-async def get_librarian(uni_id: str,
+async def get_librarian(lib_id: str,
                         token: Annotated[str, Depends(oauth2_scheme)],
                         lib_cursor: Cursor = Depends(Cursor())):
     """route to get info of a registered librarian"""
     verify_token(token)
-    librarian = lib_cursor.get(Librarian, uni_id)
+    librarian = lib_cursor.get(Librarian, lib_id)
     if not librarian:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="librarian does not exist")
