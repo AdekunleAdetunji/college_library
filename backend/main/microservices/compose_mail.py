@@ -6,12 +6,13 @@ from mailersend import emails
 from os import getenv
 
 API_KEY = getenv("MAILERSEND_API_KEY")
-EMAIL = "info@trial-k68zxl2e2d5lj905.mlsender.net"
+EMAIL = "info@projectmonty.tech"
 mailer = emails.NewEmail(API_KEY)
 
 mail_body = {}
 
 mail_from = {
+    "from": "College Library",
     "email": EMAIL
 }
 
