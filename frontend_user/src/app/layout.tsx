@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { UserProvider } from "@/contexts/login";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <UserProvider>
-          {children}
-          <Toaster />
-        </UserProvider>
+        <Suspense fallback={<>Loading</>}>
+          <UserProvider>
+            {children}
+            <Toaster />
+          </UserProvider>
+        </Suspense>
       </body>
     </html>
   );

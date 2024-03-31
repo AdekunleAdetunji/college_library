@@ -8,20 +8,18 @@ import {
   useEffect,
   useState,
 } from "react";
-const defaultValue: {
-  isLoggedIn: boolean;
-  data?: { [key: string]: any } | null;
-} = { isLoggedIn: false, data: null };
 
 export const UserContext = createContext<any>(null);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
+  let token = localStorage.getItem("access token");
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem("access token"));
+  const [tokenState, setToken] = useState("");
   const loadToken = () => {
-    setToken(localStorage.getItem("access token") || "");
+    token = localStorage.getItem("access token");
+    setToken(token || "");
   };
-  const setNewToken = (token: string) => {
-    localStorage.setItem("access token", token);
+  const setNewToken = (tkn: string) => {
+    localStorage.setItem("access token", tkn);
     loadToken();
   };
   const deleteToken = () => {
@@ -43,11 +41,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setUser({ isLoggedIn: false, data: null });
     localStorage.removeItem("user");
   };
+  const loadUser = () => {
+    const userString = localStorage.getItem("user");
+    if (userString) setUser(JSON.parse(userString));
+    else setUser({ isLoggedIn: false, data: null });
+  };
 
   const isLoggedIn = user.isLoggedIn;
 
   useEffect(() => {
     loadToken();
+    console.log(token);
     const getUserData = async (uniId: string, token: string) => {
       getUser(uniId, token).then((data) => {
         console.log(data);
@@ -80,6 +84,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         isLoggedIn,
         loadToken,
         isLoadingAuth,
+        loadUser,
       }}
     >
       {children}
