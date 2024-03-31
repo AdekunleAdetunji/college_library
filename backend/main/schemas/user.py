@@ -22,4 +22,4 @@ class User(Basemodel, Base):
     password = Column(PasswordType(schemes="md5_crypt"), nullable=True)
     phone_no = Column(String(20), nullable=False)
     is_staff = Column(Boolean, nullable=False)
-    borrows = relationship("Borrow", backref="user", cascade="all, delete")
+    borrows = relationship("Borrow", backref="user")

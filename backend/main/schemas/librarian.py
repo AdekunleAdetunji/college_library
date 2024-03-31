@@ -21,5 +21,4 @@ class Librarian(Basemodel, Base):
     password = Column(PasswordType(schemes="md5_crypt"), nullable=False)
     email = Column(EmailType(100), nullable=False, unique=True)
     phone_no = Column(String(20), nullable=False)
-    borrows = relationship("Borrow", backref="librarian",
-                           cascade="all, delete")
+    borrows = relationship("Borrow", backref="librarian")
