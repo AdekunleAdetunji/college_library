@@ -14,3 +14,8 @@ class ReserveBookModel(BaseIn, BaseOut):
     uni_id: str
     description: str
     expire_date: datetime
+
+
+class BlacklistBookModel(ReserveBookModel):
+    """model to validate books in blacklist"""
+    pass
