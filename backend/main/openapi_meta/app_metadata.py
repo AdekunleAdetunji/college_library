@@ -20,7 +20,7 @@ tailored to cater to specific user roles and functionalities:
     related to library management at an administrative level.
     - Administrators have access to a range of functions essential for
     overseeing and controlling library operations effectively.
-    
+
     For detailed information and documentation regarding the Admin
     subapplication, please refer to the
     [Admin Documentation](http://localhost:8000/admin/docs).
@@ -30,7 +30,7 @@ tailored to cater to specific user roles and functionalities:
       specifically designed for librarians.
     - Librarians utilize this subapplication to manage various aspects of book
       inventory, borrower requests, and library resources efficiently.
-    
+
     Further details and documentation regarding the Librarian subapplication
     can be found [here.](http://localhost:8000/librarian/docs)
 
@@ -41,7 +41,7 @@ tailored to cater to specific user roles and functionalities:
     - Users can utilize this subapplication to search for books,
       check availability, make reservations, and manage their borrowing
       activities seamlessly.
-    
+
     For comprehensive information and documentation regarding the User
     subapplication, please visit [this link.](http://localhost:8000/user/docs)
 
@@ -74,14 +74,14 @@ ensure efficient management and organization of library resources.
   that do not align with existing categories or schools within the university's
   structure, the admin can seamlessly add new faculty entries to the library
   database.
-  
+
   This ensures that all books are appropriately categorized and
   accessible to library users.
 
 - **Registration of New Librarians**: The admin has the authority to register
   new librarians, granting them access to the librarian application and its
   functionalities.
-  
+
   By controlling librarian registrations, the admin maintains
   oversight and ensures that only authorized personnel manage library
   operations.
@@ -104,21 +104,20 @@ experience and library efficiency.
 - **Addition of New Book Arrivals**: Librarians can easily add newly acquired
   books to the library inventory, ensuring that the catalog remains up-to-date
   and comprehensive.
-  
+
   This functionality includes specifying book details such
   as title, author, genre, and availability status.
 
 - **Borrowal Monitoring and Approval**: Librarians oversee the borrowal
   process, monitoring requests from library users and approving or denying them
   based on availability and library policies.
-  
-  This ensures fair and efficient
-  distribution of library resources.
 
-- **Book Return Management**: Librarians facilitate the return process, checking
-  in borrowed books and updating their availability status in the library
-  system.
-  
+  This ensures fair and efficient distribution of library resources.
+
+- **Book Return Management**: Librarians facilitate the return process,
+  checking in borrowed books and updating their availability status in the
+  library system.
+
   This functionality helps maintain accurate records of book borrowals
   and returns, optimizing library resource utilization.
 
@@ -138,7 +137,7 @@ efficiently.
 ## Key Features
 - **Book Search and Availability**: Users can easily search for books within
   the library's inventory and check their availability status in real-time.
-  
+
   This feature enables users to locate desired books quickly and plan their
   library visits effectively.
 
@@ -149,21 +148,21 @@ efficiently.
 - **Borrowing History**: The subapplication provides users with access to
   their borrowing history, allowing them to track the books they have borrowed
   in the past and their respective due dates.
-  
+
   This feature promotes
   accountability and helps users manage their borrowing activities effectively.
 
 - **User Profile Management**: Users can manage their profiles within the
   subapplication, including updating personal information, changing passwords,
   and configuring notification preferences.
-  
+
   This feature enhances user
   experience and ensures personalized interaction with the library system.
 
 - **Feedback and Support (coming in future versions)**: The subapplication
   offers a platform for users to provide feedback, report issues, or seek
   assistance from library staff.
-  
+
   This proactive approach to user support
   fosters a collaborative environment and ensures timely resolution of user
   queries and concerns
