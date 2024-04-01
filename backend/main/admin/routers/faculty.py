@@ -4,6 +4,7 @@ from ...authentication.verify_token import oauth2_scheme
 from ...authentication.verify_token import verify_token
 from ...cursor.cursor import Cursor
 from ...openapi_meta.tag import Tags
+from ...microservices.celery.tasks import sync_faculty
 from ...pydantic_models.faculty import FacultyModelIn
 from ...pydantic_models.faculty import FacultyModelOut
 from ...schemas.faculty import Faculty
@@ -42,3 +43,13 @@ async def add_faculty(body: list[FacultyModelIn],
 
     faculties = lib_cursor.all(Faculty)
     return faculties
+
+
+@admin_faculty.put("/sync-faculty", status_code=status.HTTP_201_CREATED,
+                   response_model=bool, tags=[Tags.faculty])
+async def sync_faculty(token: Annotated[str, Depends(oauth2_scheme)]):
+    """
+    router to synchronize the school table in university table with the library
+    faculty table
+    """
+    sync_faculty.delay()
