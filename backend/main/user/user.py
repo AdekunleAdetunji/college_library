@@ -6,6 +6,7 @@ to the student
 from main.openapi_meta import app_metadata
 from .routers.account import user_account_router
 from .routers.book.book import book_router
+from .routers.book.blacklist import blacklists_router
 from .routers.book.borrow import borrow_router
 from .routers.book.reserves import reserves_router
 from .routers.faculty import faculty_router
@@ -22,6 +23,7 @@ from fastapi import HTTPException
 from fastapi import status
 
 user = FastAPI(title="College Library (User App)",
+               description=app_metadata.user_desciption,
                contact=app_metadata.contact,
                openapi_tags=user_tags_metadata)
 
@@ -49,6 +51,7 @@ async def explore_a_book(book_id: str, lib_cursor: Cursor = Depends(Cursor())):
 user.include_router(user_account_router)
 user.include_router(book_router)
 user.include_router(reserves_router)
+user.include_router(blacklists_router)
 user.include_router(borrow_router)
 user.include_router(registration_router)
 user.include_router(user_login_router)

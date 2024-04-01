@@ -22,6 +22,7 @@ from typing import Annotated
 
 
 admin = FastAPI(title="College Library (Admin App)",
+                description=app_metadata.admin_description,
                 contact=app_metadata.contact,
                 openapi_tags=admin_tags_metadata
                 )
