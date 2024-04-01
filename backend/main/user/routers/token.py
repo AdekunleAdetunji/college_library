@@ -27,8 +27,6 @@ async def login_for_token(login_info: Annotated[OAuth2PasswordRequestForm,
     username = login_info.username
     password = login_info.password
     verify_info(username, password, cursor=lib_cursor)
-    # sync library faculties on user info confirmation
-    sync_faculty.delay()
     access_token = create_access_token(data={"sub": username},
                                        expires_delta=access_token_expires_user)
 
