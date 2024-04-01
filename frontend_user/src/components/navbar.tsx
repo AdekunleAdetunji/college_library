@@ -4,9 +4,12 @@ import Link from "next/link";
 import CollegeLibraryLogo from "@/assets/images/library logo.jpg";
 import { ReactNode, useContext } from "react";
 import { UserContext } from "@/contexts/login";
+import { useSession, signOut } from "next-auth/react";
 
 const Navbar = () => {
-  const { deleteToken, isLoggedIn } = useContext(UserContext);
+  // const { deleteToken, isLoggedIn } = useContext(UserContext);
+  const session = useSession();
+  const isLoggedIn = session.status === "authenticated";
 
   return (
     <nav className="bg-gray-800">
@@ -41,7 +44,7 @@ const Navbar = () => {
           <ul className="flex gap=4">
             {isLoggedIn && (
               <li className="ml-4">
-                <button onClick={() => deleteToken()} className="text-white">
+                <button onClick={() => signOut()} className="text-white">
                   Sign out
                 </button>
               </li>

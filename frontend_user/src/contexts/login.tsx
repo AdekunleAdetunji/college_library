@@ -50,8 +50,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     loadToken();
     const getUserData = async (uniId: string, token: string) => {
       getUser(uniId, token).then((data) => {
-        console.log(data);
-
         if (data.isSuccess) {
           userLogIn(data.data);
         } else userLogOut();

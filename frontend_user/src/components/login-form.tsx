@@ -22,10 +22,10 @@ import {
 } from "@/components/ui/select";
 import { capitalize } from "@/lib/utils";
 import { UserType } from "@/types/users";
-import { signIn } from "@/lib/actions";
 import { useToast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
 import { UserContext } from "@/contexts/login";
+import { signIn } from "next-auth/react";
 
 const LoginForm = ({
   userTypes,
@@ -36,7 +36,7 @@ const LoginForm = ({
 }) => {
   const { toast } = useToast();
   const router = useRouter();
-  const { setNewToken } = useContext(UserContext);
+  // const { setNewToken } = useContext(UserContext);
   const [userType, setUserType] = useState("");
   const derivedIdType = userType === "student" ? "matric_no" : "staff_id";
   const derivedLabel = capitalize(derivedIdType.replace("_", " "));
@@ -54,16 +54,26 @@ const LoginForm = ({
     },
   });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const res = await signIn(values);
-    if (res.isSuccess) {
-      toast({
-        description: res.message,
-      });
-      setNewToken(res.data.access_token);
-      return router.replace("/books");
-    }
     toast({
-      description: res.message,
+      description: "You are now logging in",
+      duration: 1000,
+    });
+    const login = await signIn("credentials", {
+      redirect: false,
+      callbackUrl: "/books",
+      ...values,
+    });
+    console.log(login);
+    if (login?.ok) {
+      toast({
+        description: "You are now logging in",
+        duration: 1000,
+      });
+      return router.push("/books");
+    }
+
+    toast({
+      description: login?.error,
       variant: "destructive",
     });
   };
