@@ -29,13 +29,12 @@ book_router = APIRouter()
 
 @book_router.get("/get-books", response_model=list[BookModelOut],
                  status_code=status.HTTP_200_OK, tags=[Tags.book])
-async def get_faculty_books(user_id: str, faculty_id: str,
-                            token: Annotated[str, Depends(oauth2_scheme)],
-                            lib_cursor: Cursor = Depends(Cursor()),
-                            uni_cursor: Cursor = Depends(
-                                Cursor("university")
-                                )):
-    """router to fetch all the books available in a school"""
+async def get_books(user_id: str,
+                    token: Annotated[str, Depends(oauth2_scheme)],
+                    faculty_id: str | None = None,
+                    lib_cursor: Cursor = Depends(Cursor()),
+                    uni_cursor: Cursor = Depends(Cursor("university"))):
+    """router to fetch all the books available in the library"""
     token_dict = verify_token(token)
     if token_dict["sub"] != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
@@ -45,19 +44,21 @@ async def get_faculty_books(user_id: str, faculty_id: str,
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="user not found")
-
-    faculty = lib_cursor.get(Faculty, faculty_id)
-    if not faculty:
-        school = uni_cursor.get(School, faculty_id)
-        if not school:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail="faculty not found")
-        school = FacultyModelIn.model_validate(school)
-        faculty = lib_cursor.new(Faculty, **school.model_dump())
-        lib_cursor.save()
+    if faculty_id:
         faculty = lib_cursor.get(Faculty, faculty_id)
+        if not faculty:
+            school = uni_cursor.get(School, faculty_id)
+            if not school:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                    detail="faculty not found")
+            school = FacultyModelIn.model_validate(school)
+            faculty = lib_cursor.new(Faculty, **school.model_dump())
+            lib_cursor.save()
+            faculty = lib_cursor.get(Faculty, faculty_id)
 
-    return faculty.books
+        return faculty.books
+
+    return lib_cursor.all(Book)
 
 
 @book_router.post("/make-reservation", status_code=status.HTTP_200_OK,
