@@ -11,10 +11,7 @@ from ....cursor.redis_cursor import redis_cursor
 from ....microservices.celery.tasks import reserve_book
 from ....openapi_meta.tag import Tags
 from ....pydantic_models.book import BookModelOut
-from ....pydantic_models.faculty import FacultyModelIn
 from ....schemas.book import Book
-from ....schemas.faculty import Faculty
-from ....schemas.school import School
 from ....schemas.user import User
 from fastapi import APIRouter
 from fastapi import Depends
@@ -31,9 +28,7 @@ book_router = APIRouter()
                  status_code=status.HTTP_200_OK, tags=[Tags.book])
 async def get_books(user_id: str,
                     token: Annotated[str, Depends(oauth2_scheme)],
-                    faculty_id: str | None = None,
-                    lib_cursor: Cursor = Depends(Cursor()),
-                    uni_cursor: Cursor = Depends(Cursor("university"))):
+                    lib_cursor: Cursor = Depends(Cursor())):
     """router to fetch all the books available in the library"""
     token_dict = verify_token(token)
     if token_dict["sub"] != user_id:
@@ -44,42 +39,29 @@ async def get_books(user_id: str,
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="user not found")
-    if faculty_id:
-        faculty = lib_cursor.get(Faculty, faculty_id)
-        if not faculty:
-            school = uni_cursor.get(School, faculty_id)
-            if not school:
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                    detail="faculty not found")
-            school = FacultyModelIn.model_validate(school)
-            faculty = lib_cursor.new(Faculty, **school.model_dump())
-            lib_cursor.save()
-            faculty = lib_cursor.get(Faculty, faculty_id)
-
-        return faculty.books
 
     return lib_cursor.all(Book)
 
 
 @book_router.post("/make-reservation", status_code=status.HTTP_200_OK,
                   tags=[Tags.book], response_model=bool)
-async def make_reservation(user_uni_id: str, book_uni_id: str,
+async def make_reservation(user_id: str, book_id: str,
                            token: Annotated[str, Depends(oauth2_scheme)],
                            is_staff: bool = False,
                            red_cursor: Redis = Depends(redis_cursor),
                            lib_cursor: Cursor = Depends(Cursor())):
     """route to make reservation for a book"""
     token = verify_token(token)
-    if user_uni_id != token["sub"]:
+    if user_id != token["sub"]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="access denied")
 
-    user = lib_cursor.get(User, user_uni_id)
+    user = lib_cursor.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="user not found")
 
-    book = lib_cursor.get(Book, book_uni_id)
+    book = lib_cursor.get(Book, book_id)
     if not book:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="book not found")
@@ -95,7 +77,7 @@ async def make_reservation(user_uni_id: str, book_uni_id: str,
         reserves = {}
 
     if reserves:
-        user_reserves = reserves.get(user_uni_id)
+        user_reserves = reserves.get(user_id)
         if not user_reserves:
             user_reserves = {}
 
@@ -119,7 +101,7 @@ async def make_reservation(user_uni_id: str, book_uni_id: str,
     else:
         blacklists = {}
 
-    user_blacklists = blacklists.get(user_uni_id)
+    user_blacklists = blacklists.get(user_id)
     if user_blacklists:
         book_info = user_blacklists.get(book.uni_id)
     else:
@@ -130,6 +112,6 @@ async def make_reservation(user_uni_id: str, book_uni_id: str,
                             detail="user blacklisted from reserving book")
 
     # call celery reserve_book task to make reservation
-    reserve_book.delay(user_uni_id, book.uni_id)
+    reserve_book.delay(user_id, book.uni_id)
 
     return True
