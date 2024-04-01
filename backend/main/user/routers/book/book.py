@@ -43,9 +43,33 @@ async def get_books(user_id: str,
     return lib_cursor.all(Book)
 
 
+@book_router.get("/get-books/{book_id}", response_model=BookModelOut,
+                 status_code=status.HTTP_200_OK, tags=[Tags.book])
+async def get_books(user_id: str, book_id: str,
+                    token: Annotated[str, Depends(oauth2_scheme)],
+                    lib_cursor: Cursor = Depends(Cursor())):
+    """router to fetch all the books available in the library"""
+    token_dict = verify_token(token)
+    if token_dict["sub"] != user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="access denied")
+
+    user = lib_cursor.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="user not found")
+
+    book = lib_cursor.get(Book, book_id)
+    if not book:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="book not found")
+
+    return book
+
+
 @book_router.post("/make-reservation", status_code=status.HTTP_200_OK,
                   tags=[Tags.book], response_model=bool)
-async def make_reservation(user_id: str, book_id: str,
+async def make_reservation(book_id: str, user_id: str,
                            token: Annotated[str, Depends(oauth2_scheme)],
                            is_staff: bool = False,
                            red_cursor: Redis = Depends(redis_cursor),
