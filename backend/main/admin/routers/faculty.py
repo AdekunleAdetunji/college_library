@@ -33,12 +33,15 @@ async def add_faculty(body: list[FacultyModelIn],
                       lib_cursor: Cursor = Depends(Cursor())):
     """router to allow admin add a new faculty not in university database"""
     verify_token(token)
-    faculties = body.model_dump()
-    if not faculties:
+    if not body:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail="faculty list can not be empty")
-    for faculty in faculties:
-        lib_cursor.new(Faculty, **faculty)
+
+    for faculty in body:
+        lib_faculty = lib_cursor.get(Faculty, faculty.uni_id)
+        if not lib_faculty:
+            faculty_dict = faculty.model_dump()
+            lib_cursor.new(Faculty, **faculty_dict)
     lib_cursor.save()
 
     faculties = lib_cursor.all(Faculty)
