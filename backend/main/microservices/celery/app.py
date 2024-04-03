@@ -15,10 +15,10 @@ app = Celery(
 app.conf.beat_schedule = {
     "check_reserve": {
         "task": "main.microservices.celery.tasks.check_reserves",
-        "schedule": 30
+        "schedule": crontab(hour=23, minute=59)
     },
     "whitelist": {
         "task": "main.microservices.celery.tasks.whitelist",
-        "schedule": 30
+        "schedule": crontab(hour=23, minute=59)
     }
 }
