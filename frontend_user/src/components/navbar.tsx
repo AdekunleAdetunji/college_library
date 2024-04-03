@@ -2,8 +2,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import CollegeLibraryLogo from "@/assets/images/library logo.jpg";
-import { ReactNode, useContext } from "react";
-import { UserContext } from "@/contexts/login";
 import { useSession, signOut } from "next-auth/react";
 
 const Navbar = () => {
@@ -29,14 +27,14 @@ const Navbar = () => {
             {isLoggedIn && (
               <li className="ml-4">
                 <Link href="/books/borrowed" className="text-white">
-                  Books
+                  My Books
                 </Link>
               </li>
             )}
             {isLoggedIn && (
               <li className="ml-4">
-                <Link href="/books/reserved" className="text-white">
-                  My Reservations
+                <Link href="/dashboard" className="text-white">
+                  My Space
                 </Link>
               </li>
             )}

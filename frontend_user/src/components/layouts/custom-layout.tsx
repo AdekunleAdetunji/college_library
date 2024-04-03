@@ -3,29 +3,17 @@ import Link from "next/link";
 import {
   Bell,
   BookDown,
-  BookPlus,
+  BookLock,
   BookUserIcon,
   CircleUser,
-  History,
   Home,
-  LineChart,
   LucideSwatchBook,
   Menu,
-  Package,
-  Package2,
   Search,
-  ShoppingCart,
-  Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,8 +32,11 @@ import {
 import { ReactNode } from "react";
 import CollegeLibraryLogo from "@/assets/images/library logo.jpg";
 import Image from "next/image";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 export function DashboardLayout({ children }: { children: ReactNode }) {
+  const session = useSession();
+
   const pathname = usePathname();
   function isActive(href: string) {
     const normalStyle =
@@ -84,9 +75,9 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               >
                 <BookDown className="h-4 w-4" />
                 Reserved Books
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                {/* <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                   6
-                </Badge>
+                </Badge> */}
               </Link>
               <Link
                 href="/books/borrowed"
@@ -96,11 +87,11 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 Borrowed Books
               </Link>
               <Link
-                href="books/user-history"
-                className={isActive("books/user-history")}
+                href="/books/blacklist"
+                className={isActive("books/blacklist")}
               >
-                <History className="h-4 w-4" />
-                History
+                <BookLock className="h-4 w-4" />
+                Blacklisted
               </Link>
             </nav>
           </div>
@@ -169,11 +160,11 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 </SheetClose>
                 <SheetClose asChild>
                   <Link
-                    href="books/user-history"
-                    className={isActive("books/user-history")}
+                    href="books/blacklist"
+                    className={isActive("books/blacklist")}
                   >
-                    <History className="h-4 w-4" />
-                    History
+                    <BookLock className="h-4 w-4" />
+                    Blacklisted
                   </Link>
                 </SheetClose>
               </nav>
@@ -185,28 +176,45 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search products..."
+                  placeholder="Search books..."
                   className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
                 />
               </div>
             </form>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <CircleUser className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-blue-900 italic">
+              Welcome {session.data?.user?.firstname}
+            </p>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="rounded-full"
+                >
+                  <CircleUser className="h-5 w-5" />
+                  <span className="sr-only">Toggle user menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Support</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Button
+                    variant="link"
+                    onClick={() =>
+                      signOut({ redirect: true, callbackUrl: "/login" })
+                    }
+                  >
+                    Logout
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </header>
         {children}
       </div>

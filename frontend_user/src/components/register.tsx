@@ -53,8 +53,6 @@ const Register = ({ darkBg }: { darkBg?: boolean }) => {
     },
   });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-
     const { uni_id, password } = values;
     const res = await register({
       uni_id,

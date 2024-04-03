@@ -4,7 +4,17 @@ import React from "react";
 import MockImage from "@/assets/images/mock_book_cover.jpg";
 import { Button } from "./ui/button";
 
-const Book: React.FC<{ book: BookInterface }> = ({ book }) => {
+const Book = ({
+  book,
+  isBlacklisted,
+  isBorrowed,
+  isReserved,
+}: {
+  book: BookInterface;
+  isReserved?: boolean;
+  isBorrowed?: boolean;
+  isBlacklisted?: boolean;
+}) => {
   book.imgUrl = book.imgUrl || MockImage;
   return (
     <div className="md:flex w-full h-full py-10">
@@ -17,10 +27,17 @@ const Book: React.FC<{ book: BookInterface }> = ({ book }) => {
           />
         </div>
         <div className="w-2/3 text-center space-y-5">
-          <Button className="w-full">Reserve</Button>
-          <Button variant="outline" className="w-full">
-            Add to Watchlist
-          </Button>
+          {isBlacklisted ? (
+            <p className="text-red-500">
+              *You are currently blacklisted for this book
+            </p>
+          ) : isBorrowed ? (
+            <p>Book borrowed awaiting return</p>
+          ) : isReserved ? (
+            <p>Book reserved, awaiting approval</p>
+          ) : (
+            <Button className="w-full">Reserve</Button>
+          )}
         </div>
       </div>
       <div className="w-2/3">
@@ -44,7 +61,7 @@ const Book: React.FC<{ book: BookInterface }> = ({ book }) => {
           {book.publish_year}
         </div>
 
-        <p className="mt-2 text-black">{book.summary}</p>
+        <p className="mt-2 text-black">{book.description}</p>
 
         <div className="mt-4">
           <ul className=" flex flex-wrap gap-3">
@@ -53,7 +70,7 @@ const Book: React.FC<{ book: BookInterface }> = ({ book }) => {
                 key={index}
                 className="text-gray-800 p-2 bg-red-400 rounded-lg"
               >
-                {faculty}
+                {faculty.name}
               </li>
             ))}
           </ul>

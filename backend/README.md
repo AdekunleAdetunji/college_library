@@ -82,7 +82,7 @@ Celery is used for managing background tasks in the application. Follow these st
 - Starting the Celery Worker: Open a new terminal window, navigate to the backend directory and run the command below to start the celery worker
 
   ```bash
-  ROLE="library" PASSWORD="library" HOST="localhost" PORT="5433" DATABASE="library" MAILERSEND_API_KEY="api_key" poetry run celery -A main.microservices.celery.app.app worker --beat --loglevel=INFO
+  ROLE="library" PASSWORD="library" HOST="localhost" PORT="5433" DATABASE="library" MAILERSEND_API_KEY="mlsn.e0f54fd4f99b4a0ef4eb9cb6e9857eae4cdc27b0ac9a6edee05e4f4ea0048b33" poetry run celery -A main.microservices.celery.app.app worker --beat --loglevel=INFO
   ```
 
 Once the environment is synchronized, in a new terminal window, navigate to the backend directory and start the backend application with the following command:

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Register from "../components/register";
+import Register from "../components/add-book";
 import {
   Select,
   SelectContent,

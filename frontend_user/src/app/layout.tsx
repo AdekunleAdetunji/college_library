@@ -2,11 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { UserProvider } from "@/contexts/login";
 import { Suspense } from "react";
 import SessionProvider from "@/hooks/session-provider";
 import { getServerSession } from "next-auth";
-import CheckLogin from "@/components/check-login";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,7 +25,6 @@ export default async function RootLayout({
       <body className={inter.className}>
         <Suspense fallback={<>Loading</>}>
           <SessionProvider session={session}>
-            <CheckLogin />
             {children}
             <Toaster />
           </SessionProvider>

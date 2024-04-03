@@ -23,7 +23,6 @@ export async function register(values: {
 }
 
 export async function signUp(values: { uni_id: string; email_code: string }) {
-  console.log(values);
   const urlParams = new URLSearchParams();
   urlParams.append("uni_id", values.uni_id);
   urlParams.append("email_code", values.email_code);
@@ -137,6 +136,107 @@ export async function getBooks(uni_id: string, token: string) {
     };
   }
 }
+export async function getBook(uni_id: string, book_id: string, token: string) {
+  try {
+    const res = await axios.get(
+      `${SERVER}/get-books/${book_id}?user_id=${uni_id}`,
+      {
+        headers: { Authorization: `bearer ${token}` },
+      }
+    );
+
+    return {
+      status: res.status,
+      message: "success",
+      isSuccess: true,
+      data: res.data,
+    };
+  } catch (error) {
+    return {
+      isSuccess: false,
+      message: (error as AxiosError).response
+        ? ((error as AxiosError).response?.data as { detail?: string })
+            ?.detail || "An error as occured"
+        : "Internal server error",
+      status: (error as AxiosError).response?.status || 500,
+    };
+  }
+}
+export async function reserveBook(
+  uni_id: string,
+  book_id: string,
+  token: string
+) {
+  try {
+    const res = await fetch(
+      `${SERVER}/make-reservation?book_id=${book_id}&user_id=${uni_id}`,
+      {
+        headers: { Authorization: `bearer ${token}` },
+        method: "POST",
+        cache: "no-cache",
+      }
+    );
+
+    return {
+      status: res.status,
+      message: "success",
+      isSuccess: true,
+      data: res.data,
+    };
+  } catch (error) {
+    return {
+      isSuccess: false,
+      message: (error as AxiosError).response
+        ? ((error as AxiosError).response?.data as { detail?: string })
+            ?.detail || "An error as occured"
+        : "Internal server error",
+      status: (error as AxiosError).response?.status || 500,
+    };
+  }
+}
+
+export async function exploreBooks() {
+  try {
+    const res = await axios.get(`${SERVER}/explore`);
+
+    return {
+      status: res.status,
+      message: "success",
+      isSuccess: true,
+      data: res.data,
+    };
+  } catch (error) {
+    return {
+      isSuccess: false,
+      message: (error as AxiosError).response
+        ? ((error as AxiosError).response?.data as { detail?: string })
+            ?.detail || "An error as occured"
+        : "Internal server error",
+      status: (error as AxiosError).response?.status || 500,
+    };
+  }
+}
+export async function exploreBook(book_id: string) {
+  try {
+    const res = await axios.get(`${SERVER}/explore/${book_id}`);
+
+    return {
+      status: res.status,
+      message: "success",
+      isSuccess: true,
+      data: res.data,
+    };
+  } catch (error) {
+    return {
+      isSuccess: false,
+      message: (error as AxiosError).response
+        ? ((error as AxiosError).response?.data as { detail?: string })
+            ?.detail || "An error as occured"
+        : "Internal server error",
+      status: (error as AxiosError).response?.status || 500,
+    };
+  }
+}
 
 export async function getReservedBooks(uni_id: string, token: string) {
   try {
@@ -165,6 +265,30 @@ export async function getReservedBooks(uni_id: string, token: string) {
 export async function getBorrowedBooks(uni_id: string, token: string) {
   try {
     const res = await axios.get(`${SERVER}/user-borrows?user_id=${uni_id}`, {
+      headers: { Authorization: `bearer ${token}` },
+    });
+
+    return {
+      status: res.status,
+      message: "success",
+      isSuccess: true,
+      data: res.data,
+    };
+  } catch (error) {
+    return {
+      isSuccess: false,
+      message: (error as AxiosError).response
+        ? ((error as AxiosError).response?.data as { detail?: string })
+            ?.detail || "An error as occured"
+        : "Internal server error",
+      status: (error as AxiosError).response?.status || 500,
+    };
+  }
+}
+
+export async function getBlacklistedBooks(uni_id: string, token: string) {
+  try {
+    const res = await axios.get(`${SERVER}/user-blacklists?user_id=${uni_id}`, {
       headers: { Authorization: `bearer ${token}` },
     });
 
@@ -230,6 +354,40 @@ export async function isBookBorrowed(
     searchParam.append("book_id", book_id);
     const res = await axios.get(
       `${SERVER}/book-in-borrows?${searchParam.toString()}`,
+      {
+        headers: { Authorization: `bearer ${token}` },
+      }
+    );
+
+    return {
+      status: res.status,
+      message: "success",
+      isSuccess: true,
+      data: res.data,
+    };
+  } catch (error) {
+    return {
+      isSuccess: false,
+      message: (error as AxiosError).response
+        ? ((error as AxiosError).response?.data as { detail?: string })
+            ?.detail || "An error as occured"
+        : "Internal server error",
+      status: (error as AxiosError).response?.status || 500,
+    };
+  }
+}
+
+export async function isBookBlacklisted(
+  uni_id: string,
+  book_id: string,
+  token: string
+) {
+  try {
+    const searchParam = new URLSearchParams();
+    searchParam.append("user_id", uni_id);
+    searchParam.append("book_id", book_id);
+    const res = await axios.get(
+      `${SERVER}/book-in-blacklists?${searchParam.toString()}`,
       {
         headers: { Authorization: `bearer ${token}` },
       }

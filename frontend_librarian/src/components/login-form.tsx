@@ -11,8 +11,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -20,26 +28,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SERVER, capitalize } from "@/lib/utils";
+import { capitalize } from "@/lib/utils";
 import { UserType } from "@/types/users";
-import { signIn } from "@/lib/actions";
+import { useToast } from "./ui/use-toast";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 const LoginForm = ({
   userTypes,
   darkBg,
-  loginRoute,
 }: {
   userTypes: UserType[];
   darkBg?: boolean;
-  loginRoute: "staff" | "user";
 }) => {
-  const [userType, setUserType] = useState("");
-  const derivedIdType = userType === "student" ? "matric_no" : "staff_id";
-  const derivedLabel = capitalize(derivedIdType.replace("_", " "));
+  const { toast } = useToast();
+  const router = useRouter();
   const formSchema = z.object({
-    uni_id: z
-      .string()
-      .min(3, { message: "Please provide a valid " + derivedLabel }),
+    uni_id: z.string().min(3, { message: "Please provide a valid id" }),
     password: z.string().min(6, { message: "Minimum of 6 characters" }),
   });
   const form = useForm<z.infer<typeof formSchema>>({
@@ -50,79 +55,89 @@ const LoginForm = ({
     },
   });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const route =
-      loginRoute === "staff"
-        ? userType === "admin"
-          ? "admin"
-          : "librarian"
-        : "user";
-    const endPoint = `${SERVER}/${route}`;
-    const user = await signIn(endPoint, values);
+    toast({
+      description: "You are now logging in",
+      duration: 1000,
+    });
+    const login = await signIn("credentials", {
+      redirect: false,
+      callbackUrl: "/books",
+      ...values,
+    });
+    if (login?.ok) {
+      toast({
+        description: "You are now logging in",
+        duration: 1000,
+      });
+      return router.push("/books");
+    }
+
+    toast({
+      description: login?.error,
+      variant: "destructive",
+    });
   };
 
   return (
-    <div className="w-full  bg-black/5 p-10 rounded-lg space-y-4">
-      <div className=" flex justify-between">
-        <p className="font-bold text-lg uppercase">Log in as</p>
-        <Select
-          onValueChange={(value) => setUserType(value)}
-          defaultValue={userType}
-          value={userType}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder={userType} />
-          </SelectTrigger>
-          <SelectContent>
-            {userTypes.map((user) => (
-              <SelectItem key={user} value={user}>
-                {capitalize(user)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {userType && (
-        <div className="w-full">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                name="uni_id"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className={darkBg ? "text-white" : ""}>
-                      {derivedLabel}
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="password"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className={darkBg ? "text-white" : ""}>
-                      Password
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="text-right">
-                <Button type="submit">Login</Button>
+    <div className="w-full h-full">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <Card className="w-full py-6 px-4">
+            <CardHeader>
+              <CardTitle className="text-2xl">Login</CardTitle>
+              <CardDescription className="flex flex-col">
+                <span>
+                  Enter your credentials below to login to your account.
+                </span>
+                <span className="italics font-light text-sm text-red-300">
+                  Id: matric no or staff id
+                </span>
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid gap-2">
+                <FormField
+                  name="uni_id"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={darkBg ? "text-white" : ""}>
+                        Id
+                      </FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-            </form>
-          </Form>
-        </div>
-      )}
+              <div className="grid gap-2">
+                <FormField
+                  name="password"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={darkBg ? "text-white" : ""}>
+                        Password
+                      </FormLabel>
+                      <FormControl>
+                        <Input type="password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" className="w-full">
+                Sign in
+              </Button>
+            </CardFooter>
+          </Card>
+        </form>
+      </Form>
     </div>
   );
 };
