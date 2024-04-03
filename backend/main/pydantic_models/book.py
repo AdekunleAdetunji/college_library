@@ -9,6 +9,7 @@ from .author import AuthorModelIn
 from .author import AuthorModelOut
 from .faculty import FacultyModelOut
 from datetime import date
+from pydantic import Field
 
 
 class BookModelIn(BaseIn):
@@ -16,7 +17,7 @@ class BookModelIn(BaseIn):
     title: str
     description: str
     faculties: list
-    uni_id: str  # remember to add that this is the isbn number
+    uni_id: str = Field(max_length=13)  # this is the book isbn number
     publisher: str | None = None
     publish_year: date | None = None
     authors: list[AuthorModelIn]
