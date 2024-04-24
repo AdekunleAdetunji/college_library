@@ -2,7 +2,6 @@
 """ The basemodel module containing the basemodel class of all tables"""
 from uuid import uuid4
 from datetime import datetime
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import UUID
@@ -10,15 +9,12 @@ from sqlalchemy import UUID
 
 class Basemodel():
     """The base class for all tables"""
-    id = Column(UUID, nullable=False, primary_key=True)
-    created_at = Column(DateTime, nullable=False)
-    updated_at = Column(DateTime, nullable=False)
+    id = Column(UUID, nullable=False, primary_key=True, default=uuid4())
+    created_at = Column(DateTime, nullable=False, default=datetime.now())
+    updated_at = Column(DateTime, nullable=False, default=datetime.now())
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize a new table entry"""
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
-        self.id = uuid4()
         for k, v in kwargs.items():
             if hasattr(self, k) and k not in ["created_at", "updated_at",
                                               "id"]:
