@@ -30,7 +30,7 @@ const NavbarElements = ({ session }) => {
     }
 
     return (
-        <nav className="bg-slate-200 text-gray-700">
+        <nav className="bg-slate-200 text-gray-700 relative">
             <div className="max-w-6xl mx-auto px-4">
                 <div className="flex justify-between">
 
@@ -71,7 +71,7 @@ const NavbarElements = ({ session }) => {
                 </div>
             </div>
 
-            <div className={` ${isMenu ? "" : "hidden"} md:hidden bg-slate-200`}>
+            <div className={`absolute w-full transition-transform duration-300 ${isMenu ? "translate-y-0 z-10" : "opacity-50 -translate-y-full -z-10"} md:hidden bg-slate-200`}>
                 {!isLoggedIn && <div>
                     <Link href="/login" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Login</Link>
                     <Link href="/register" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm text-white bg-gray-800 hover:bg-orange-800  duration-300">
