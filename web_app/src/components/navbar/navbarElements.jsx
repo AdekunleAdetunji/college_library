@@ -2,17 +2,31 @@
 import Image from "next/image";
 import Link from "next/link";
 import CollegeLibraryLogo from "@/assets/images/library_logo.png";
-import { useState } from "react";
-import { auth, signOut } from "../../auth";
+import { useEffect, useState } from "react";
+import { LogOut } from "@/lib/actions";
+import { redirect } from "next/navigation";
 
-const Navbar = () => {
+const NavbarElements = ({ session }) => {
 
-    // const session = auth();
-    const isLoggedIn = false; //session.status === "authenticated";
+    useEffect(() => {
+        const now = Date.now();
+        if (session && session.user) {
+            if (now - session.createdAt > 24 * 60 * 60 * 1000) {
+                LogOut();
+                redirect('/login');
+            }
+        }
+    }, [])
+    const isLoggedIn = session.isLoggedIn;
 
     const [isMenu, setIsMenu] = useState(false);
     const toggleMenu = () => {
         setIsMenu(!isMenu);
+    }
+
+
+    const handleLogout = async () => {
+        await LogOut();
     }
 
     return (
@@ -22,22 +36,22 @@ const Navbar = () => {
 
                     <div className="flex space-x-4">
                         <div>
-                            <a href="/" className="flex items-center py-5 px-2 hover:text-gray-900">
+                            <Link href="/" className="flex items-center py-5 px-2 hover:text-gray-900">
                                 <Image src={CollegeLibraryLogo} alt="library logo" className="w-14 h-14" />
                                 <span className="font-bold">College Library</span>
-                            </a>
+                            </Link>
                         </div>
 
                         <div className="hidden md:flex items-center space-x-1">
-                            <a href="/books" className="py-5 px-3  hover:text-orange-800">Explore</a>
-                            <a href="#" className="py-5 px-3 hover:text-orange-800">About</a>
+                            <Link href="/books" className="py-5 px-3  hover:text-orange-800">Explore</Link>
+                            <Link href="#" className="py-5 px-3 hover:text-orange-800">About</Link>
                         </div>
                     </div>
 
                     {isLoggedIn && <div className="hidden md:flex items-center space-x-8">
                         <Link href="/books/borrowed" className="hover:text-orange-800">My Books</Link>
                         <Link href="/dashboard" className="hover:text-orange-800">My Space</Link>
-                        <button onClick={() => signOut()} className="text-orange-800">Sign out</button>
+                        <button onClick={() => { handleLogout() }} className="text-orange-800">Sign out</button>
                     </div>}
 
                     {!isLoggedIn && <div className="hidden md:flex items-center space-x-1">
@@ -59,23 +73,22 @@ const Navbar = () => {
 
             <div className={` ${isMenu ? "" : "hidden"} md:hidden bg-slate-200`}>
                 {!isLoggedIn && <div>
-                    <Link href="/login" className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Login</Link>
-                    <Link href="/register" className="block py-2 px-4 text-sm text-white bg-gray-800 hover:bg-orange-800  duration-300">
+                    <Link href="/login" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Login</Link>
+                    <Link href="/register" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm text-white bg-gray-800 hover:bg-orange-800  duration-300">
                         Signup</Link>
                 </div>}
 
-                <a href="#" className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Explore</a>
-                <a href="#" className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">About</a>
+                <Link href="#" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Explore</Link>
+                <Link href="#" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">About</Link>
                 {isLoggedIn && <div>
                     <hr className="border-b-2 border-gray-400 opacity-30 my-2" />
-                    <Link href="/books/borrowed" className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">My Books</Link>
-                    <Link href="/dashboard" className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">My Space</Link>
-                    <button onClick={() => signOut()} className="block w-full text-left py-2 px-4 hover:text-white hover:bg-gray-800">Sign out</button>
+                    <Link href="/books/borrowed" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">My Books</Link>
+                    <Link href="/dashboard" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">My Space</Link>
+                    <button onClick={() => { handleLogout(); setIsMenu(false); }} className="block w-full text-left py-2 px-4 hover:text-white hover:bg-gray-800">Sign out</button>
                 </div>}
-
             </div>
         </nav>
     );
 };
 
-export default Navbar;
+export default NavbarElements;
