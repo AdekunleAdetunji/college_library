@@ -40,7 +40,7 @@ CREATE TABLE students (
     phone_no VARCHAR(20)
 );
 
--- Create 'faculties' table
+-- Create 'schools' table
 CREATE TABLE schools (
     id SERIAL PRIMARY KEY,
     uni_id VARCHAR(8),
@@ -83,9 +83,3 @@ INSERT INTO schools (uni_id, name) VALUES
 GRANT SELECT ON staffs TO library;
 GRANT SELECT ON students TO library;
 GRANT SELECT On schools To library;
-
-INSERT INTO faculties (id, uni_id, name,  created_at,  updated_at) VALUES
-('3fa85f64-5717-4562-b3fc-2c963f66afa1', 'SEET', 'school of engineering and engineering technology', '2024-03-28 23:41:11.942904', '2024-03-28 23:41:11.942904'),
-('3fa85f64-5717-4562-b3fc-2c963f66afa2', 'SAAT', 'school of agricultural and agricultural technology', '2024-03-28 23:41:11.942904', '2024-03-28 23:41:11.942904'),
-('3fa85f64-5717-4562-b3fc-2c963f66afa3', 'SPSS', 'school of physical sciences', '2024-03-28 23:41:11.942904', '2024-03-28 23:41:11.942904'),
-('3fa85f64-5717-4562-b3fc-2c963f66afa4', 'SEMS', 'school of earth and mineral ^Cience', '2024-03-28 23:41:11.942904', '2024-03-28 23:41:11.942904');

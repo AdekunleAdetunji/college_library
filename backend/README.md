@@ -22,7 +22,7 @@ The PostgreSQL version used is 12. To get the application started ensure that th
 sudo service postgresql start
 ```
 
-[Follow these instructions to install PostgreSQL version 12](https://www.cherryservers.com/blog/how-to-install-and-setup-postgresql-server-on-ubuntu-20-04)
+[Follow these instructions to install PostgreSQL version 12](https://computingforgeeks.com/install-postgresql-12-on-ubuntu/#google_vignette)
 
 After starting the database server, create the necessary roles, databases, and tables for the application by running:
 
