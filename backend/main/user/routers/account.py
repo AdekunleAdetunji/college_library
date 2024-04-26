@@ -69,10 +69,10 @@ async def get_reset_code(body: UserRegModel,
     return {}
 
 
-@user_account_router.put("/reset-password",
+@user_account_router.put("/confirm-password-reset",
                          status_code=status.HTTP_202_ACCEPTED,
                          tags=[Tags.reset_pass])
-async def reset_password(uni_id: str, email_code: str,
+async def confirm_password_reset(uni_id: str, email_code: str,
                          lib_cursor: Cursor = Depends(Cursor()),
                          red_cursor: Redis = Depends(redis_cursor)):
     """route to reset user password"""
