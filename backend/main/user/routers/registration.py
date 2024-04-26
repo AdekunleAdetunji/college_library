@@ -26,7 +26,7 @@ registration_router = APIRouter()
 
 @registration_router.post("/get-signup-code", tags=[Tags.sign_up],
                           status_code=status.HTTP_201_CREATED)
-async def get_code(body: UserRegModel,
+async def get_signup_code(body: UserRegModel,
                    red_cursor: Annotated[Redis, Depends(redis_cursor)],
                    lib_cursor: Cursor = Depends(Cursor()),
                    uni_cursor: Cursor = Depends(Cursor("university"))):
@@ -59,9 +59,9 @@ async def get_code(body: UserRegModel,
     return {}
 
 
-@registration_router.post("/sign-up", tags=[Tags.sign_up],
+@registration_router.post("/confirm-sign-up", tags=[Tags.sign_up],
                           status_code=status.HTTP_202_ACCEPTED)
-async def sign_up(uni_id: str, email_code: str,
+async def confirm_sign_up(uni_id: str, email_code: str,
                   redis_cursor: Annotated[Redis, Depends(redis_cursor)],
                   lib_cursor: Cursor = Depends(Cursor())):
     """route to handle confirmation of email sent to email"""
