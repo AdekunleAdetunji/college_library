@@ -73,8 +73,8 @@ async def get_reset_code(body: UserRegModel,
                          status_code=status.HTTP_202_ACCEPTED,
                          tags=[Tags.reset_pass])
 async def confirm_password_reset(uni_id: str, email_code: str,
-                         lib_cursor: Cursor = Depends(Cursor()),
-                         red_cursor: Redis = Depends(redis_cursor)):
+                                 lib_cursor: Cursor = Depends(Cursor()),
+                                 red_cursor: Redis = Depends(redis_cursor)):
     """route to reset user password"""
     user = lib_cursor.get(User, uni_id)
     if not user:
