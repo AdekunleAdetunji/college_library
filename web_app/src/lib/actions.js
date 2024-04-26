@@ -29,7 +29,7 @@ export async function handleConfirmRegistration(values) {
     try {
         console.log(values)
         const res = await axios.post(
-            `${SERVER}/sign-up?${urlParams.toString()}`,
+            `${SERVER}/confirm-sign-up?${urlParams.toString()}`,
             values
         );
         return { status: res.status, message: "success", isSuccess: true };
@@ -121,7 +121,7 @@ export const LogOut = async () => {
     session.destroy();
 }
 
-export const handleChangePassword = async (values) => {
+export const handleGetResetCode = async (values) => {
     const session = await getSession();
     if (!session.user) {
         redirect("/login");
@@ -143,10 +143,50 @@ export const handleChangePassword = async (values) => {
 
         return {
             isSuccess: true,
+            message: "Confirmation code has been sent to your email!"
+        }
+
+    } catch (error) {
+        return {
+            isSuccess: false,
+            message: error.response
+                ? error.response.data.detail || "An error has occurred"
+                : "Internal server error",
+            status: error.response ? error.response.status : 500,
+        };
+    }
+}
+
+export const handleChangePassword = async (value) => {
+    const session = await getSession();
+    if (!session.user) {
+        redirect("/login");
+    }
+    const uni_id = session.user.uni_id;
+
+    try {
+        const response = await axios({
+            method: "put",
+            url: `http://localhost:8000/user/confirm-password-reset?uni_id=${uni_id}&email_code=${value.resetCode}`,
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        });
+
+        console.log('----------------------------');
+        console.log(response);
+        if (response.status === 401 || response.status === 405) {
+            return {
+                isSuccess: false,
+                message: response.detail
+            }
+        }
+
+        return {
+            isSuccess: true,
             message: "Password has been changed successfully!"
         }
 
     } catch (error) {
+        console.log(error);
         return {
             isSuccess: false,
             message: error.response
