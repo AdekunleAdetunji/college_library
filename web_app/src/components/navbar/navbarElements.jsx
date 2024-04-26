@@ -4,7 +4,7 @@ import Link from "next/link";
 import CollegeLibraryLogo from "@/assets/images/library_logo.png";
 import { useEffect, useState } from "react";
 import { LogOut } from "@/lib/actions";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 const NavbarElements = ({ session }) => {
 
@@ -27,6 +27,7 @@ const NavbarElements = ({ session }) => {
 
     const handleLogout = async () => {
         await LogOut();
+        window.location.reload();
     }
 
     return (
@@ -50,7 +51,7 @@ const NavbarElements = ({ session }) => {
 
                     {isLoggedIn && <div className="hidden md:flex items-center space-x-8">
                         <Link href="/books/borrowed" className="hover:text-orange-800">My Books</Link>
-                        <Link href="/dashboard" className="hover:text-orange-800">My Space</Link>
+                        <Link href="/profile" className="hover:text-orange-800">Profile</Link>
                         <button onClick={() => { handleLogout() }} className="text-orange-800">Sign out</button>
                     </div>}
 
@@ -83,7 +84,7 @@ const NavbarElements = ({ session }) => {
                 {isLoggedIn && <div>
                     <hr className="border-b-2 border-gray-400 opacity-30 my-2" />
                     <Link href="/books/borrowed" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">My Books</Link>
-                    <Link href="/dashboard" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">My Space</Link>
+                    <Link href="/profile" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Profile</Link>
                     <button onClick={() => { handleLogout(); setIsMenu(false); }} className="block w-full text-left py-2 px-4 hover:text-white hover:bg-gray-800">Sign out</button>
                 </div>}
             </div>

@@ -71,8 +71,6 @@ export async function handleLogin(values) {
             user_response = await axios.get(`http://localhost:8000/user/?uni_id=${values.username}`, {
                 headers: { Authorization: `bearer ${response.data.access_token}` },
             });
-
-
         } catch (error) {
             return {
                 isSuccess: false,
@@ -88,6 +86,7 @@ export async function handleLogin(values) {
             lastname: user_response.data.lastname,
             middlename: user_response.data.middlename,
             email: user_response.data.email,
+            is_staff: false,
             uni_id: user_response.data.uni_id,
             phone_no: user_response.data.phone_no,
             id: user_response.data.id,
@@ -107,7 +106,6 @@ export async function handleLogin(values) {
             data: response.data,
         };
     } catch (error) {
-        console.log(error);
         return {
             isSuccess: false,
             message: error.response
@@ -121,5 +119,40 @@ export async function handleLogin(values) {
 export const LogOut = async () => {
     const session = await getSession();
     session.destroy();
-    redirect("/");
+}
+
+export const handleChangePassword = async (values) => {
+    const session = await getSession();
+    if (!session.user) {
+        redirect("/login");
+    }
+
+    const data = {
+        uni_id: session.user.uni_id,
+        is_staff: false,
+        new_password: values.password
+    }
+
+    try {
+        const response = await axios.post('http://localhost:8000/user/get-reset-code', data, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: session.access_token,
+            }
+        })
+
+        return {
+            isSuccess: true,
+            message: "Password has been changed successfully!"
+        }
+
+    } catch (error) {
+        return {
+            isSuccess: false,
+            message: error.response
+                ? error.response.data.detail || "An error has occurred"
+                : "Internal server error",
+            status: error.response ? error.response.status : 500,
+        };
+    }
 }
