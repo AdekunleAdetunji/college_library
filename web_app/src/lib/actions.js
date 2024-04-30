@@ -4,11 +4,12 @@ import { SERVER, defaultSession, sessionOptions } from "./utils";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { Adamina } from "next/font/google";
 
 
 export async function handleRegister(values) {
     try {
-        const res = await axios.post(`${SERVER}/get-signup-code`, values);
+        const res = await axios.post(`${SERVER}/user/${values.user}/get-signup-code`, values);
         return { status: res.status, message: "success", isSuccess: true };
     } catch (error) {
         return {
@@ -61,40 +62,51 @@ export async function handleLogin(values) {
     try {
         const response = await axios({
             method: "post",
-            url: 'http://localhost:8000/user/token',
+            url: `${SERVER}/${values.user}/token`,
             data: `grant_type=&username=${values.username}&password=${values.password}`,
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
         });
 
         let user_response = null;
-        try {
-            user_response = await axios.get(`http://localhost:8000/user/?uni_id=${values.username}`, {
-                headers: { Authorization: `bearer ${response.data.access_token}` },
-            });
-        } catch (error) {
-            return {
-                isSuccess: false,
-                message: error.response
-                    ? error.response.data.detail || "An error has occurred"
-                    : "Internal server error",
-                status: error.response ? error.response.status : 500,
-            };
-        }
+        let user = null;
+        if (values.user !== 'admin') {
+            try {
+                user_response = await axios.get(`${SERVER}/${values.user}/?uni_id=${values.username}`, {
+                    headers: { Authorization: `bearer ${response.data.access_token}` },
+                });
+            } catch (error) {
+                return {
+                    isSuccess: false,
+                    message: error.response
+                        ? error.response.data.detail || "An error has occurred"
+                        : "Internal server error",
+                    status: error.response ? error.response.status : 500,
+                };
+            }
 
-        const user = {
-            firstname: user_response.data.firstname,
-            lastname: user_response.data.lastname,
-            middlename: user_response.data.middlename,
-            email: user_response.data.email,
-            is_staff: false,
-            uni_id: user_response.data.uni_id,
-            phone_no: user_response.data.phone_no,
-            id: user_response.data.id,
+            user = {
+                userType: values.user,
+                firstname: user_response.data.firstname,
+                lastname: user_response.data.lastname,
+                middlename: user_response.data.middlename,
+                email: user_response.data.email,
+                is_staff: false,
+                uni_id: user_response.data.uni_id,
+                phone_no: user_response.data.phone_no,
+                id: user_response.data.id,
+            }
+        } else {
+            user = {
+                userType: values.user,
+                is_staff: false,
+                uni_id: 'admin',
+            }
         }
         session.access_token = response.data.access_token;
         session.token_type = response.data.token_type;
         session.createdAt = Date.now();
         session.user = user;
+
 
         session.isLoggedIn = true;
         await session.save();
@@ -134,7 +146,7 @@ export const handleGetResetCode = async (values) => {
     }
 
     try {
-        const response = await axios.post('http://localhost:8000/user/get-reset-code', data, {
+        const response = await axios.post(`${SERVER}/user/get-reset-code`, data, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: session.access_token,
@@ -167,12 +179,10 @@ export const handleChangePassword = async (value) => {
     try {
         const response = await axios({
             method: "put",
-            url: `http://localhost:8000/user/confirm-password-reset?uni_id=${uni_id}&email_code=${value.resetCode}`,
+            url: `${SERVER}/user/confirm-password-reset?uni_id=${uni_id}&email_code=${value.resetCode}`,
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
         });
 
-        console.log('----------------------------');
-        console.log(response);
         if (response.status === 401 || response.status === 405) {
             return {
                 isSuccess: false,
@@ -186,7 +196,6 @@ export const handleChangePassword = async (value) => {
         }
 
     } catch (error) {
-        console.log(error);
         return {
             isSuccess: false,
             message: error.response
@@ -195,4 +204,86 @@ export const handleChangePassword = async (value) => {
             status: error.response ? error.response.status : 500,
         };
     }
+}
+
+/**
+ * Fetch books
+ */
+export const fetchBooks = async () => {
+    try {
+        const response = await axios({
+            method: 'get',
+            url: `${SERVER}/user/explore`
+        })
+
+        return { isSuccess: true, data: response.data }
+    } catch (error) {
+        return {
+            isSuccess: false,
+            message: error.response
+                ? error.response.data.detail || "An error has occurred"
+                : "Internal server error",
+            status: error.response ? error.response.status : 500,
+        };
+    }
+}
+
+/**
+ * Get faculties - admin action
+ */
+export const getFaculties = async () => {
+    const session = await getSession();
+    if (session.isLoggedIn && session.user.userType === 'admin') {
+        try {
+            const response = await axios.get(`${SERVER}/admin/faculties`, {
+                headers: { Authorization: `bearer ${session.access_token}` },
+            })
+
+            return {
+                isSuccess: true,
+                data: response.data,
+            }
+        } catch (error) {
+            return {
+                isSuccess: false,
+                message: error.response
+                    ? error.response.data.detail || "An error has occurred"
+                    : "Internal server error",
+                status: error.response ? error.response.status : 500,
+            };
+        }
+    } else {
+        redirect('/401');
+    }
+}
+
+/**
+ * add faculty - admin action
+ */
+export const addFaculty = async (values) => {
+    const session = await getSession();
+    if (session.isLoggedIn && session.user.userType === 'admin')
+
+        try {
+            const response = await axios({
+                method: 'post',
+                url: `${SERVER}/add-faculty`,
+                data: { uni_id: values.uni_id, new_password: values.password },
+                headers: {
+                    Authorization: `bearer ${session.access_token}`,
+                }
+            })
+            return {
+                isSuccess: true,
+                data: response.data,
+            }
+        } catch (error) {
+            return {
+                isSuccess: false,
+                message: error.response
+                    ? error.response.data.detail || "An error has occurred"
+                    : "Internal server error",
+                status: error.response ? error.response.status : 500,
+            };
+        }
 }

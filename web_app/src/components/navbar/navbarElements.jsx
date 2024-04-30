@@ -44,14 +44,19 @@ const NavbarElements = ({ session }) => {
                         </div>
 
                         <div className="hidden md:flex items-center space-x-1">
-                            <Link href="/books" className="py-5 px-3  hover:text-orange-800">Explore</Link>
-                            <Link href="#" className="py-5 px-3 hover:text-orange-800">About</Link>
+                            <Link href="/explore" className="py-5 px-3  hover:text-orange-800">Explore</Link>
+                            <Link href="/about" className="py-5 px-3 hover:text-orange-800">About</Link>
                         </div>
                     </div>
 
                     {isLoggedIn && <div className="hidden md:flex items-center space-x-8">
-                        <Link href="/books/borrowed" className="hover:text-orange-800">My Books</Link>
-                        <Link href="/profile" className="hover:text-orange-800">Profile</Link>
+                        {session.user.userType !== 'admin' && <>
+                            <Link href="/books/borrowed" className="hover:text-orange-800">My Books</Link>
+                            <Link href="/profile" className="hover:text-orange-800">Profile</Link>
+                        </>
+                        }
+                        {session.user.userType === 'admin' &&
+                            <Link href="/admin" className="hover:text-orange-800">Dashboard</Link>}
                         <button onClick={() => { handleLogout() }} className="text-orange-800">Sign out</button>
                     </div>}
 
@@ -79,12 +84,17 @@ const NavbarElements = ({ session }) => {
                         Signup</Link>
                 </div>}
 
-                <Link href="#" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Explore</Link>
-                <Link href="#" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">About</Link>
+                <Link href="/explore" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Explore</Link>
+                <Link href="/about" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">About</Link>
                 {isLoggedIn && <div>
                     <hr className="border-b-2 border-gray-400 opacity-30 my-2" />
-                    <Link href="/books/borrowed" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">My Books</Link>
-                    <Link href="/profile" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Profile</Link>
+                    {session.user.userType !== 'admin' && <>
+                        <Link href="/books/borrowed" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">My Books</Link>
+                        <Link href="/profile" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Profile</Link>
+                    </>
+                    }
+                    {session.user.userType === 'admin' &&
+                        <Link href="/admin" className="hover:text-orange-800">Dashboard</Link>}
                     <button onClick={() => { handleLogout(); setIsMenu(false); }} className="block w-full text-left py-2 px-4 hover:text-white hover:bg-gray-800">Sign out</button>
                 </div>}
             </div>
