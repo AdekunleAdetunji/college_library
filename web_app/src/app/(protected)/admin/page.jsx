@@ -23,7 +23,7 @@ const Admin = async () => {
             </div>
             <AddFaculty />
             <section className="py-1 bg-blueGray-50 w-full">
-                <div className="w-full xl:w-1/2 px-4 mx-auto mt-24">
+                <div className="w-full xl:w-1/2 px-4 mx-auto mt-20">
                     <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white ">
                         <div className="rounded-t mb-0 px-4 py-3 border-0">
                             <div className="flex flex-wrap items-center">
@@ -54,7 +54,7 @@ const Admin = async () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {faculties.map((element) => {
+                                    {faculties.map((element, i) => {
                                         return <tr key={element.uni_id}>
                                             <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
                                                 {element.name}
@@ -62,12 +62,12 @@ const Admin = async () => {
                                             <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 ">
                                                 {element.uni_id}
                                             </td>
-                                            {/* <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                            <div className="flex items-center">
-                                                <span className="mr-2">{element.email}</span>
-                                                
-                                            </div>
-                                        </td> */}
+                                            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                                <div className="flex items-center">
+                                                    <span className="mr-2">{element.email}</span>
+
+                                                </div>
+                                            </td>
                                         </tr>
                                     })}
                                 </tbody>

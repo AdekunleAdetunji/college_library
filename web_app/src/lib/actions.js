@@ -267,8 +267,8 @@ export const addFaculty = async (values) => {
         try {
             const response = await axios({
                 method: 'post',
-                url: `${SERVER}/add-faculty`,
-                data: { uni_id: values.uni_id, new_password: values.password },
+                url: `${SERVER}/admin/add-faculty`,
+                data: [{ uni_id: values.uni_id, name: values.name }],
                 headers: {
                     Authorization: `bearer ${session.access_token}`,
                 }
@@ -278,6 +278,7 @@ export const addFaculty = async (values) => {
                 data: response.data,
             }
         } catch (error) {
+            console.log(error);
             return {
                 isSuccess: false,
                 message: error.response
