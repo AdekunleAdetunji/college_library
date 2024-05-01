@@ -262,8 +262,7 @@ export const getFaculties = async () => {
  */
 export const addFaculty = async (values) => {
     const session = await getSession();
-    if (session.isLoggedIn && session.user.userType === 'admin')
-
+    if (session.isLoggedIn && session.user.userType === 'admin') {
         try {
             const response = await axios({
                 method: 'post',
@@ -278,6 +277,39 @@ export const addFaculty = async (values) => {
                 data: response.data,
             }
         } catch (error) {
+            return {
+                isSuccess: false,
+                message: error.response
+                    ? error.response.data.detail || "An error has occurred"
+                    : "Internal server error",
+                status: error.response ? error.response.status : 500,
+            };
+        }
+    } else {
+        redirect('/404');
+    }
+}
+
+/**
+ * Add librarian
+ */
+export const addLibrarian = async (values) => {
+    const session = await getSession();
+    if (session.isLoggedIn && session.user.userType === 'admin') {
+        try {
+            const response = await axios({
+                method: 'post',
+                url: `${SERVER}/admin/add-librarian`,
+                data: { uni_id: values.uni_id, new_password: values.password },
+                headers: {
+                    Authorization: `bearer ${session.access_token}`,
+                }
+            });
+            return {
+                isSuccess: true,
+                data: response.data,
+            }
+        } catch (error) {
             console.log(error);
             return {
                 isSuccess: false,
@@ -287,4 +319,7 @@ export const addFaculty = async (values) => {
                 status: error.response ? error.response.status : 500,
             };
         }
+    } else {
+        redirect('/404');
+    }
 }

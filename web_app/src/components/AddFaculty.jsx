@@ -1,7 +1,8 @@
 'use client'
 
-import { addFaculty } from '@/lib/actions';
+import { addFaculty, addLibrarian } from '@/lib/actions';
 import React, { useState } from 'react'
+import { Toaster, toast } from 'sonner';
 
 const AddFaculty = () => {
     const [showModal, setShowModal] = useState(false);
@@ -10,9 +11,12 @@ const AddFaculty = () => {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [error, setError] = useState('');
-    const [elementAdded, setSelementAdded] = useState(false);
 
     const handleShowModal = (val) => {
+        setUNIID('');
+        setPassword('');
+        setName('');
+        setError('');
         setShowModal(val);
     }
 
@@ -37,15 +41,24 @@ const AddFaculty = () => {
             }
             const response = await addFaculty({ name: name, uni_id: uniID });
             if (response.isSuccess) {
-                setSelementAdded(true);
                 setShowModal(false);
                 setUNIID('');
                 setName('');
+                toast.success('Successfuly added!');
             } else {
                 setError(response.message);
             }
         } else {
             //add librarian
+            const response = await addLibrarian({ uni_id: uniID, password: password });
+            if (response.isSuccess) {
+                setShowModal(false);
+                setUNIID('');
+                setName('');
+                toast.success('Successfuly added!');
+            } else {
+                setError(response.message);
+            }
         }
 
     }
@@ -96,6 +109,7 @@ const AddFaculty = () => {
                     {error !== '' && <p className='text-red-500'>{error}</p>}
                 </div>
             </div>
+            <Toaster richColors />
         </div>
     )
 }
