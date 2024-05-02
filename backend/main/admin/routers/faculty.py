@@ -8,6 +8,7 @@ from ...microservices.celery.tasks import sync_faculty
 from ...pydantic_models.faculty import FacultyModelIn
 from ...pydantic_models.faculty import FacultyModelOut
 from ...schemas.faculty import Faculty
+from ...schemas.school import School
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import HTTPException
@@ -30,7 +31,8 @@ async def get_faculties(token: Annotated[str, Depends(oauth2_scheme)],
                     response_model=list[FacultyModelOut], tags=[Tags.faculty])
 async def add_faculty(body: list[FacultyModelIn],
                       token: Annotated[str, Depends(oauth2_scheme)],
-                      lib_cursor: Cursor = Depends(Cursor())):
+                      lib_cursor: Cursor = Depends(Cursor()),
+                      uni_cursor: Cursor = Depends(Cursor("university"))):
     """router to allow admin add a new faculty not in university database"""
     verify_token(token)
     if not body:
@@ -38,10 +40,16 @@ async def add_faculty(body: list[FacultyModelIn],
                             detail="faculty list can not be empty")
 
     for faculty in body:
+        school = uni_cursor.get(School, faculty.uni_id)
+        if school:
+            sync_faculty.delay()
+            continue
+        
         lib_faculty = lib_cursor.get(Faculty, faculty.uni_id)
         if not lib_faculty:
             faculty_dict = faculty.model_dump()
             lib_cursor.new(Faculty, **faculty_dict)
+    
     lib_cursor.save()
 
     faculties = lib_cursor.all(Faculty)
@@ -50,7 +58,7 @@ async def add_faculty(body: list[FacultyModelIn],
 
 @admin_faculty.put("/sync-faculty", status_code=status.HTTP_201_CREATED,
                    response_model=bool, tags=[Tags.faculty])
-async def sync_faculty(token: Annotated[str, Depends(oauth2_scheme)]):
+async def update_faculty(token: Annotated[str, Depends(oauth2_scheme)]):
     """
     router to synchronize the school table in university table with the library
     faculty table
