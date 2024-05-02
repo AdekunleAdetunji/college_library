@@ -9,9 +9,9 @@ from sqlalchemy import UUID
 
 class Basemodel():
     """The base class for all tables"""
-    id = Column(UUID, nullable=False, primary_key=True, default=uuid4())
-    created_at = Column(DateTime, nullable=False, default=datetime.now())
-    updated_at = Column(DateTime, nullable=False, default=datetime.now())
+    id = Column(UUID, nullable=False, primary_key=True, default=uuid4)
+    created_at = Column(DateTime, nullable=False, default=datetime.now)
+    updated_at = Column(DateTime, nullable=False, default=datetime.now)
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize a new table entry"""
