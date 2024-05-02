@@ -44,12 +44,12 @@ async def add_faculty(body: list[FacultyModelIn],
         if school:
             sync_faculty.delay()
             continue
-        
+
         lib_faculty = lib_cursor.get(Faculty, faculty.uni_id)
         if not lib_faculty:
             faculty_dict = faculty.model_dump()
             lib_cursor.new(Faculty, **faculty_dict)
-    
+
     lib_cursor.save()
 
     faculties = lib_cursor.all(Faculty)
