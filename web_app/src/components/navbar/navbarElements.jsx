@@ -50,13 +50,15 @@ const NavbarElements = ({ session }) => {
                     </div>
 
                     {isLoggedIn && <div className="hidden md:flex items-center space-x-8">
-                        {session.user.userType !== 'admin' && <>
+                        {session.user.userType === 'user' && <>
                             <Link href="/books/borrowed" className="hover:text-orange-800">My Books</Link>
                             <Link href="/profile" className="hover:text-orange-800">Profile</Link>
                         </>
                         }
                         {session.user.userType === 'admin' &&
                             <Link href="/admin" className="hover:text-orange-800">Dashboard</Link>}
+                        {session.user.userType === 'librarian' &&
+                            <Link href="/lib-dashboard" className="hover:text-orange-800">Dashboard</Link>}
                         <button onClick={() => { handleLogout() }} className="text-orange-800">Sign out</button>
                     </div>}
 
@@ -94,7 +96,9 @@ const NavbarElements = ({ session }) => {
                     </>
                     }
                     {session.user.userType === 'admin' &&
-                        <Link href="/admin" className="hover:text-orange-800">Dashboard</Link>}
+                        <Link href="/admin" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Dashboard</Link>}
+                    {session.user.userType === 'librarian' &&
+                        <Link href="/lib-dashboard" onClick={() => { toggleMenu() }} className="block py-2 px-4 text-sm hover:text-white hover:bg-orange-800">Dashboard</Link>}
                     <button onClick={() => { handleLogout(); setIsMenu(false); }} className="block w-full text-left py-2 px-4 hover:text-white hover:bg-gray-800">Sign out</button>
                 </div>}
             </div>
