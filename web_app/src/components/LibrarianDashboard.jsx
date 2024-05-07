@@ -2,9 +2,15 @@
 
 import React, { useState } from 'react'
 import ApproveBorrow from './ApproveBorrow';
+import AddBook from './AddBook';
 
 const LibrarianDashboard = () => {
     const [tab, setTab] = useState('approve');
+    const [showAddBook, setShowAddBook] = useState(false);
+
+    const handleShowAddBook = (val) => {
+        setShowAddBook(val);
+    }
 
     const handleTabDrop = (e) => {
         setTab(e.target.value);
@@ -14,11 +20,16 @@ const LibrarianDashboard = () => {
         setTab(t);
     }
     return (
-        <div className='mt-8'>
-            <div className="sm:hidden">
+        <div className='mt-4'>
+            <div className='w-full flex justify-end'>
+                <button onClick={() => handleShowAddBook(true)} className='bg-green-700 text-white mb-3 rounded-lg py-1 px-4 md:px-8 right-0 border-2 border-green-700 hover:bg-white hover:text-green-700'>
+                    Add Book
+                </button>
+            </div>
+            <div className="md:hidden">
                 <label htmlFor="Tab" className="sr-only">Tab</label>
 
-                <select id="Tab" defaultValue="Approve Borrow" onChange={handleTabDrop} className="w-full rounded-md border-gray-200">
+                <select id="Tab" defaultValue="Approve Borrow" onChange={handleTabDrop} className="border-2 p-2 rounded-md border-gray-200">
                     <option value='approve'>Approve Borrow</option>
                     <option value='check-in'>Check-in</option>
                     <option value='reserves'>Reserves</option>
@@ -27,7 +38,7 @@ const LibrarianDashboard = () => {
                 </select>
             </div>
 
-            <div className="hidden sm:block">
+            <div className="hidden md:block mb-4">
                 <div className="border-b border-gray-200">
                     <nav className="-mb-px flex gap-6" aria-label="Tabs">
                         <button
@@ -156,6 +167,9 @@ const LibrarianDashboard = () => {
             {tab === 'user-blacklists' && <div>
                 user blacklists!
             </div>}
+
+            {/* add book */}
+            <AddBook showModal={showAddBook} handleModal={handleShowAddBook} />
         </div>
     )
 }
