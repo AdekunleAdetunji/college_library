@@ -310,7 +310,6 @@ export const addLibrarian = async (values) => {
                 data: response.data,
             }
         } catch (error) {
-            console.log(error);
             return {
                 isSuccess: false,
                 message: error.response
@@ -319,6 +318,41 @@ export const addLibrarian = async (values) => {
                 status: error.response ? error.response.status : 500,
             };
         }
+    } else {
+        redirect('/404');
+    }
+}
+
+/**
+ * Add book
+ */
+export const addBook = async (data) => {
+    const session = await getSession();
+    if (session.isLoggedIn && session.user.userType === 'librarian') {
+        const lib_id = session.user.uni_id;
+        try {
+            const response = await axios({
+                method: 'post',
+                url: `${SERVER}/librarian/add-book?lib_id=${lib_id}`,
+                data: data,
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `bearer ${session.access_token}`,
+                }
+            });
+            return {
+                isSuccess: true
+            }
+        } catch (error) {
+            return {
+                isSuccess: false,
+                message: error.response
+                    ? error.response.data.detail || "An error has occurred"
+                    : "Internal server error",
+                status: error.response ? error.response.status : 500,
+            };
+        }
+
     } else {
         redirect('/404');
     }
