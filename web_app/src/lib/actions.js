@@ -357,3 +357,24 @@ export const addBook = async (data) => {
         redirect('/404');
     }
 }
+
+/**
+ * Fetch books
+ */
+export const getBooks = async () => {
+    try {
+        const response = await axios.get(`${SERVER}/user/explore`);
+        return {
+            isSuccess: true,
+            data: response.data
+        }
+    } catch (error) {
+        return {
+            isSuccess: false,
+            message: error.response
+                ? error.response.data.detail || "An error has occurred"
+                : "Internal server error",
+            status: error.response ? error.response.status : 500,
+        };
+    }
+}
