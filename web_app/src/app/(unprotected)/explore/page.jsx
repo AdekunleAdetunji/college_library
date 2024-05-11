@@ -1,5 +1,5 @@
 import BookCard from '@/components/BookCard';
-import { fetchBooks, getBooks } from '@/lib/actions';
+import { getBooks } from '@/lib/actions';
 import React from 'react'
 
 const Explore = async () => {
@@ -11,7 +11,7 @@ const Explore = async () => {
             {response.isSuccess ?
                 <div className='flex justify-center flex-wrap gap-6'>
                     {response.data.map((element) => {
-                        return <BookCard key={element.id} id={element.id} title={element.title} description={element.description} />
+                        return <BookCard key={element.id} id={element.uni_id} title={element.title} description={element.description} />
                     })}
                 </div>
                 :

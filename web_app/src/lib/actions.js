@@ -362,8 +362,49 @@ export const addBook = async (data) => {
  * Fetch books
  */
 export const getBooks = async () => {
+    const session = await getSession();
     try {
-        const response = await axios.get(`${SERVER}/user/explore`);
+        let response = null;
+        if (session.isLoggedIn) {
+            response = await axios.get(`${SERVER}/user/get-books/?user_id=${session.user.uni_id}`, {
+                headers: {
+                    Authorization: `bearer ${session.access_token}`
+                }
+            });
+
+        } else {
+            response = await axios.get(`${SERVER}/user/explore`);
+        }
+        return {
+            isSuccess: true,
+            data: response.data
+        }
+    } catch (error) {
+        return {
+            isSuccess: false,
+            message: error.response
+                ? error.response.data.detail || "An error has occurred"
+                : "Internal server error",
+            status: error.response ? error.response.status : 500,
+        };
+    }
+}
+
+/**
+ * fetch book details
+ */
+export const bookDetails = async (id) => {
+    const session = await getSession();
+    if (!session.isLoggedIn) {
+        redirect('/login');
+    }
+    try {
+        const response = await axios.get(`${SERVER}/user/explore/${id}/?user_id=${session.user.uni_id}`, {
+            headers: {
+                Authorization: `bearer ${session.access_token}`
+            }
+        });
+
         return {
             isSuccess: true,
             data: response.data
