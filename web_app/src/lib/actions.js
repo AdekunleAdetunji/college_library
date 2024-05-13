@@ -419,3 +419,68 @@ export const bookDetails = async (id) => {
         };
     }
 }
+
+/**
+ * make book reservation
+ */
+export const makeReservation = async (book_id) => {
+    const session = await getSession();
+    if (!session.isLoggedIn) {
+        redirect('/login');
+    }
+    try {
+        const response = await axios({
+            method: 'post',
+            data: '',
+            url: `${SERVER}/user/make-reservation?book_id=${book_id}&user_id=${session.user.uni_id}&is_staff=${session.user.is_staff}`,
+            headers: {
+                Authorization: `bearer ${session.access_token}`
+            }
+        });
+        console.log(response);
+
+        return {
+            isSuccess: response.data
+        }
+    } catch (error) {
+        return {
+            isSuccess: false,
+            message: error.response
+                ? error.response.data.detail || "An error has occurred"
+                : "Internal server error",
+            status: error.response ? error.response.status : 500,
+        };
+    }
+}
+
+/**
+ * books reserved by uer
+ */
+export const booksReservedByUser = async () => {
+    const session = await getSession();
+    if (!session.isLoggedIn) {
+        redirect('/login');
+    }
+    try {
+        const response = await axios({
+            method: 'get',
+            url: `${SERVER}/user/user-reserves?user_id=${session.user.uni_id}`,
+            headers: {
+                Authorization: `bearer ${session.access_token}`,
+            }
+        });
+
+        return {
+            isSuccess: true,
+            data: response.data
+        }
+    } catch (error) {
+        return {
+            isSuccess: false,
+            message: error.response
+                ? error.response.data.detail || "An error has occurred"
+                : "Internal server error",
+            status: error.response ? error.response.status : 500,
+        };
+    }
+}
